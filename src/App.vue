@@ -1,25 +1,49 @@
 <template>
   <div id="app">
-    <div id="nav">
-      <router-link to="/">Home</router-link> |
-      <router-link to="/about">About</router-link>
+    <div v-if="loadShow">
+      <load @showRouter="showRouter()">
+      </load>
     </div>
-    <router-view/>
+    <div v-else>
+      <tab></tab>
+      <menu-side></menu-side>
+      <router-view />
+      <!-- <player></player> -->
+    </div>
   </div>
 </template>
-<style lang="stylus">
-#app
-  font-family 'Avenir', Helvetica, Arial, sans-serif
-  -webkit-font-smoothing antialiased
-  -moz-osx-font-smoothing grayscale
-  text-align center
-  color #2c3e50
 
-#nav
-  padding 30px
-  a
-    font-weight bold
-    color #2c3e50
-    &.router-link-exact-active
-      color #42b983
+<script>
+import Load from "@/components/Load.vue";
+import Tab from "@/components/Tab.vue";
+import MenuSide from "@/components/MenuSide.vue";
+export default {
+  name: "app",
+  components: {
+    Load,
+    Tab,
+    MenuSide
+  },
+  data() {
+    return {
+      loadShow: true
+    };
+  },
+  methods: {
+    showRouter() {
+      this.loadShow = false;
+    }
+  }
+};
+</script>
+
+<style lang="stylus">
+body
+  font-family Arial Helvetica sans-serif
+.icon
+  width 1em
+  height 1em
+  vertical-align -0.15rem
+  fill currentColor
+  overflow hidden
 </style>

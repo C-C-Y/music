@@ -1,0 +1,117 @@
+<template>
+  <transition name="menu">
+    <div class="menuSide"
+         v-show="homeMenuShow">
+      <div class="left"
+           @touchmove.prevent>
+        <div class="personalInfo">
+          <img src="../assets/img/1.jpg"
+               alt=""
+               class="avatar">
+          <span class="nickName">火鸡是</span>
+        </div>
+        <div class="options">
+          <div class="option">
+            <svg class="icon "
+                 aria-hidden="true">
+              <use xlink:href="#icon-haoyou"></use>
+            </svg>
+            <span class="text">我的好友</span>
+          </div>
+          <div class="option">
+            <svg class="icon "
+                 aria-hidden="true">
+              <use xlink:href="#icon-clean"></use>
+            </svg>
+            <span class="text">清除缓存</span>
+          </div>
+          <div class="option">
+            <svg class="icon "
+                 aria-hidden="true">
+              <use xlink:href="#icon-moonbyueliang"></use>
+            </svg>
+            <span class="text">夜间模式</span>
+          </div>
+          <div class="option">
+            <svg class="icon "
+                 aria-hidden="true">
+              <use xlink:href="#icon-tuichu"></use>
+            </svg>
+            <span class="text">退出登录</span>
+          </div>
+        </div>
+      </div>
+      <div class="right"
+           @touchmove.prevent
+           @click="toggeleHomeMenu()"></div>
+    </div>
+  </transition>
+</template>
+
+<script>
+import { mapState, mapMutations } from "vuex";
+export default {
+  name: "menuside",
+  computed: {
+    ...mapState(["homeMenuShow"])
+  },
+  methods: {
+    ...mapMutations(["toggeleHomeMenu"])
+  }
+};
+</script>
+
+<style lang="stylus" scoped>
+.menu-enter-active,.menu-leave-active
+  transition all .3s linear
+  transform translateX(0) 
+  opacity 1 
+.menu-enter,.menu-leave-to
+  transform translateX(-100%)
+  opacity 0  
+.menuSide
+  position fixed
+  top 0
+  bottom 0
+  width 100%
+  z-index 20
+  overflow hidden
+  .left
+    width 80%
+    height 100vh
+    float left
+    background-color #333
+    color #bbb
+    .personalInfo
+      display flex
+      flex-direction column
+      justify-content flex-end
+      padding-left 0.2rem
+      height 3.5rem
+      background-color #888
+      .avatar
+        width 1.4rem
+        height 1.4rem
+        border-radius 1rem
+      .nickName
+        color #eee
+        margin 0.2rem 0 0.3rem 0
+        font-size 0.4rem
+    .options
+      display flex
+      flex-direction column
+      align-items stretch
+      .option
+        display flex
+        align-items center
+        height 0.7rem
+        line-height 0.7rem
+        font-size 0.4rem
+        padding-left 0.2rem
+        .text
+          margin-left 0.15rem
+  .right
+    float right
+    width 20%
+    height 100vh
+</style>
