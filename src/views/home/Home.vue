@@ -1,17 +1,30 @@
 <template>
   <div class="home">
-    <div class="homeTab">
-    <router-link :to="{name:'recommend'}" tag="span">推荐</router-link>
-    <router-link :to="{name:'news'}" tag="span">朋友</router-link>
-    <router-link :to="{name:'radio'}" tag="span">电台</router-link>
-    </div>
+    <tab></tab>
+    <menu-side :userInfo = "menuInfo"></menu-side>
     <router-view></router-view>
   </div>
 </template>
 
 <script>
+import Tab from "@/components/Tab.vue";
+import MenuSide from "@/components/MenuSide.vue";
+import { mapState } from "vuex";
 export default {
-  name: "home"
+  name: "home",
+  data() {
+    return {
+      menuInfo: {}
+    };
+  },
+  components: {
+    Tab,
+    MenuSide
+  },
+  computed: {
+    ...mapState(["userId"])
+  },
+  created() {}
 };
 </script>
 
@@ -22,8 +35,4 @@ export default {
   background-color #333
   color #fff
   font-size .35rem
-  .homeTab
-    margin-bottom .3rem
-    display flex
-    justify-content space-around
 </style>

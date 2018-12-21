@@ -4,11 +4,12 @@
          v-show="homeMenuShow">
       <div class="left"
            @touchmove.prevent>
-        <div class="personalInfo">
-          <img src="../assets/img/1.jpg"
+        <div class="personalInfo"
+             ref="personalInfo" :style="bgc" @click="enterDeatil()">
+          <img  
                alt=""
-               class="avatar">
-          <span class="nickName">火鸡是</span>
+               class="avatar" :src="avatarUrl">
+          <span class="nickName">{{nickname}}</span>
         </div>
         <div class="options">
           <div class="option">
@@ -49,26 +50,68 @@
 </template>
 
 <script>
+import api from "@/api/api";
 import { mapState, mapMutations } from "vuex";
 export default {
   name: "menuside",
+  data() {
+    return {
+      personalInfo: null
+    };
+  },
+  mounted() {},
   computed: {
-    ...mapState(["homeMenuShow"])
+    ...mapState(["homeMenuShow", "userInfo"]),
+    avatarUrl() {
+      return this.personalInfo ? this.personalInfo.profile.avatarUrl : "";
+    },
+    nickname() {
+      return this.personalInfo ? this.personalInfo.profile.nickname : "";
+    },
+    bgc() {
+      let bgcUrl = this.personalInfo
+        ? `url(${this.personalInfo.profile.backgroundUrl})`
+        : "";
+      return {
+        backgroundImage: bgcUrl,
+        backgroundSize: "cover",
+        backgroundRepeat: "no-repeat",
+        backgroundPosition: "0% 50%"
+      };
+    }
   },
   methods: {
-    ...mapMutations(["toggeleHomeMenu"])
+    ...mapMutations(["toggeleHomeMenu"]),
+    enterDeatil() {
+      this.$router.push(`/personalpage/${this.userInfo.id}`);
+      this.toggeleHomeMenu();
+    }
+  },
+  created() {
+    this.$nextTick(() => {
+      this.$axios
+        .get(`${api.url}/user/detail?uid=${this.userInfo.id}`, {
+          withCredentials: true
+        })
+        .then(result => {
+          this.personalInfo = result.data;
+        })
+        .catch(err => {
+          console.log(err);
+        });
+    });
   }
 };
 </script>
 
 <style lang="stylus" scoped>
-.menu-enter-active,.menu-leave-active
-  transition all .3s linear
-  transform translateX(0) 
-  opacity 1 
-.menu-enter,.menu-leave-to
+.menu-enter-active, .menu-leave-active
+  transition all 0.3s linear
+  transform translateX(0)
+  opacity 1
+.menu-enter, .menu-leave-to
   transform translateX(-100%)
-  opacity 0  
+  opacity 0
 .menuSide
   position fixed
   top 0

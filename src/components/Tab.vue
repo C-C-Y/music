@@ -6,19 +6,19 @@
       <use xlink:href="#icon-caidan"></use>
     </svg>
     <div class="main">
-      <router-link to="/personal"
+      <router-link to="/home/personal"
                    class="icon personal"
                    tag="svg"
                    aria-hidden="true">
         <use xlink:href="#icon-denglu"></use>
       </router-link>
-      <router-link to="/home"
-                   class="icon home"
+      <router-link to="/home/music"
+                   class="icon music"
                    tag="svg"
                    aria-hidden="true">
         <use xlink:href="#icon-yinle"></use>
       </router-link>
-      <router-link to="/mv"
+      <router-link to="/home/mv"
                    class="icon mv"
                    tag="svg"
                    aria-hidden="true">

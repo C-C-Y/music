@@ -1,10 +1,12 @@
 <template>
-  <div>radio</div>
+  <div v-show="ifShow()">
+    <slot></slot>
+  </div>
 </template>
 
 <script>
 export default {
-  name: "radio"
+  name: "panel"
 };
 </script>
 

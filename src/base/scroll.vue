@@ -5,51 +5,65 @@
 </template>
 
 <script>
-import BScroll from "better-scroll" ;
+import BScroll from "better-scroll";
 export default {
-  name:"scroll",
-  props:{
-    probeType:{
-      type:Number,
-      default:1
+  name: "scroll",
+  props: {
+    probeType: {
+      type: Number,
+      default: 1
     },
-    data:{
-      type:Array,
-      default:null
+    data: {
+      type: Array,
+      default: null
     },
-    click:{
-      type:Boolean,
-      default:true
+    click: {
+      type: Boolean,
+      default: true
+    },
+    listenScroll: {
+      type: Boolean,
+      default: false
+    },
+    canScroll: {
+      type: Boolean,
+      default: true
     }
   },
-  methods:{
-    initScroll(){
-      if(!this.$refs.wrapper){
-        return
-      }else{
-        this.scroll = new BScroll(this.$refs.wrapper,{
-          probeType:this.probeType,
-          click:this.click
-        })
+  methods: {
+    initScroll() {
+      if (!this.$refs.wrapper) {
+        return;
+      } else {
+        this.scroll = new BScroll(this.$refs.wrapper, {
+          probeType: this.probeType,
+          click: this.click
+        });
+        if (this.listenScroll) {
+          let me = this;
+          this.scroll.on("scroll", pos => {
+            me.$emit("scroll", pos);
+          });
+        }
       }
     },
-    refresh(){
-      this.scroll && this.scroll.refresh()
+    refresh() {
+      this.scroll && this.scroll.refresh();
     }
   },
-  mounted(){
-    this.nextTick(()=>{
-      this.initScroll()
-    })
+  mounted() {
+    setTimeout(() => {
+      this.initScroll();
+    }, 20);
   },
-  watch:{
-    data(){
-      this.$nextTick(()=>{
-        this.refresh()
-      })
+  watch: {
+    data() {
+      setTimeout(() => {
+        this.refresh();
+      }, 20);
     }
   }
-} 
+};
 </script>
 
 <style lang="stylus" scoped>

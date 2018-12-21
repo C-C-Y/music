@@ -18,7 +18,7 @@
     
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
     <script>
-      axios.get("http://106.14.122.79:8080/login/cellphone?phone=18861831827&password=qq132013",{
+      axios.get("http://localhost:3000/login/cellphone?phone=18861831827&password=qq132013",{
         withCredentials: true 
       }).then((result) => {
         console.log(result.data);

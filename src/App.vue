@@ -1,29 +1,16 @@
 <template>
   <div id="app">
-    <div v-if="loadShow">
-      <load @showRouter="showRouter()">
-      </load>
-    </div>
-    <div v-else>
-      <tab></tab>
-      <menu-side></menu-side>
+    <keep-alive exclude="load">
       <router-view />
-      <!-- <player></player> -->
-    </div>
+    </keep-alive>
+    <!-- <player></player> -->
   </div>
 </template>
 
 <script>
-import Load from "@/components/Load.vue";
-import Tab from "@/components/Tab.vue";
-import MenuSide from "@/components/MenuSide.vue";
 export default {
   name: "app",
-  components: {
-    Load,
-    Tab,
-    MenuSide
-  },
+  components: {},
   data() {
     return {
       loadShow: true
