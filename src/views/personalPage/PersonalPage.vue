@@ -1,12 +1,14 @@
 <template>
   <div v-if="personalInfo.profile && songlist.playlist"
        class="personPage">
-    <div class="back"
-         @click="back()">
+    <div class="back">
       <svg class="icon"
-           aria-hidden="true">
+           aria-hidden="true"
+           @click="back()">
         <use xlink:href="#icon-fanhui"></use>
       </svg>
+      <span v-show="topNickname"
+            class="nickname">{{personalInfo.profile.nickname}}</span>
     </div>
     <div class="userInfo"
          ref="userInfo">
@@ -27,9 +29,11 @@
             @scroll="scroll"
             :listenScroll="listenScroll"
             :probeType="probeType"
-            :canScroll="canScroll">
+            :canScroll="canScroll"
+            :bounce="bounce">
       <person-detail :songList="songlist"
-                     :userInfo="personalInfo"></person-detail>
+                     :userInfo="personalInfo"
+                     :secondMove="secondMove"></person-detail>
     </scroll>
   </div>
 </template>
@@ -45,7 +49,15 @@ export default {
       personalInfo: {},
       songlist: {},
       scrollY: 0,
-      canScroll: true
+      canScroll: true,
+      secondMove: 0,
+      bounce: {
+        top: true,
+        left: true,
+        right: true,
+        bottom: false
+      },
+      topNickname: false
     };
   },
   components: {
@@ -114,30 +126,36 @@ export default {
       opacity = opacity < 0 ? 0 : opacity;
       let val = newval / 1.3;
       if (cardTop + newval <= 50) {
+        this.secondMove = newval;
+        this.topNickname = true;
         this.$refs.bg.style.zIndex = 20;
         this.$refs.bg.style.paddingBottom = 0;
         this.$refs.bg.style.height = "50px";
         this.$refs.filter.style.backgroundColor = "#222";
         this.$refs.bg.style.opacity = 1;
         this.$refs.bg.style["transform"] = `translateY(0)`;
-        this.$refs.bg.style["webkitTransform"] = `translateY(0)`;
+        this.$refs.bg.style["WebkitTransform"] = `translateY(0)`;
       } else if (newval < 0 && cardTop + newval > 50) {
+        this.secondMove = 0;
+        this.topNickname = false;
         this.canScroll = true;
         this.$refs.bg.style.zIndex = 0;
         this.$refs.bg.style.paddingBottom = `${bgPaddingBottom}px`;
         this.$refs.bg.style.height = 0;
         this.$refs.filter.style.backgroundColor = "rgba(7, 17, 27, 0.4)";
         this.$refs.bg.style["transform"] = `translateY(${val}px)`;
-        this.$refs.bg.style["webkitTransform"] = `translateY(${val}px)`;
+        this.$refs.bg.style["WebkitTransform"] = `translateY(${val}px)`;
         this.$refs.userInfo.style["transform"] = `translateY(${val}px)`;
-        this.$refs.userInfo.style["webkitTransform"] = `translateY(${val}px)`;
+        this.$refs.userInfo.style["WebkitTransform"] = `translateY(${val}px)`;
         this.$refs.bg.style.opacity = opacity;
         this.$refs.userInfo.style.opacity = opacity;
       } else {
+        this.secondMove = 0;
+        this.topNickname = false;
         this.canScroll = true;
         this.$refs.userInfo.style["transform"] = `translateY(${newval}px)`;
         this.$refs.userInfo.style[
-          "webkitTransform"
+          "WebkitTransform"
         ] = `translateY(${newval}px)`;
       }
     }
@@ -157,9 +175,15 @@ export default {
     position fixed
     top 0.2rem
     left 0.2rem
+    display flex
+    align-items center
     color #fff
     font-size 0.5rem
     z-index 30
+    .nickname
+      font-size 0.34rem
+      color #eee
+      margin-left 0.2rem
   .userInfo
     display flex
     flex-direction column
@@ -172,12 +196,12 @@ export default {
       color #eee
       margin-top 0.2rem
     .avatar
-      width 1.4rem
-      height 1.4rem
+      width 1.2rem
+      height 1.2rem
       border-radius 1rem
     .extraInfo
       color #ccc
-      font-size 0.27rem
+      font-size 0.25rem
       margin-top 0.3rem
   .background
     position relative

@@ -1,7 +1,11 @@
 import Vue from "vue";
 export default {
-  toggeleHomeMenu(state) {
-    state.homeMenuShow = !state.homeMenuShow;
+  toggeleHomeMenu(state, tag = true) {
+    if (tag) {
+      state.homeMenuShow = !state.homeMenuShow;
+    } else {
+      state.homeMenuShow = false;
+    }
   },
   ifUserInfo(state, userObject = { id: false }) {
     Vue.set(state, "userInfo", userObject);

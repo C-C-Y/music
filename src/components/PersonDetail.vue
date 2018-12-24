@@ -1,7 +1,7 @@
 <template>
   <div v-if="profile && songList.playlist">
     <card :initIndex="1"
-          :tabArr="tabs" class="showCards">
+          :tabArr="tabs" class="showCards" :secondMove="secondMove">
       <div class="music"
            slot="1">
         <p class="info border-bottom">歌单</p>
@@ -65,6 +65,10 @@ export default {
       default() {
         return {};
       }
+    },
+    secondMove: {
+      type: [String, Number],
+      default: 0
     }
   },
   computed: {
@@ -114,10 +118,12 @@ export default {
 
 <style lang="stylus" scoped>
 .showCards >>> .content
+  position relative
   background-color #222
   color #ccc
   overflow-x hidden
-  min-height 150%vh
+  min-height 100%vh
+  z-index 8
 .border-bottom
   &:before  
     border-color #333
@@ -137,21 +143,22 @@ export default {
       justify-content center
       padding-left 0.2rem
       .nameBox
-        min-width 50%vw
+        min-width 0
         .name
           width 90%
-          font-size 0.35rem
-          height 0.37rem
-          line-height 0.37rem
+          font-size 0.32rem
+          height 0.35rem
+          line-height 0.35rem
           overflow hidden
           white-space nowrap
           text-overflow ellipsis
       .record
         margin-top .1rem  
         color #666 
+        font-size .25rem
     .pic
-      width 1.4rem
-      height 1.4rem
+      width 1.2rem
+      height 1.2rem
       border-radius .15rem
 .activity
   display flex
@@ -167,6 +174,6 @@ export default {
   padding-left .1rem
   .title
     line-height .8rem
-    font-size .35rem
+    font-size .32rem
     color #eee    
 </style>

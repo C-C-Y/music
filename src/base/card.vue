@@ -29,6 +29,10 @@ export default {
     initIndex: {
       type: [Number, String],
       default: 0
+    },
+    secondMove: {
+      type: [Number, String],
+      default: 0
     }
   },
   data() {
@@ -49,12 +53,26 @@ export default {
     ifShow(index) {
       return this.actualShow === index;
     }
+  },
+  watch: {
+    secondMove(val) {
+      if (val == 0) {
+        this.$refs.tab.style["transform"] = "translateY(0)";
+        this.$refs.tab.style["WebkitTransform"] = "translateY(0)";
+      } else {
+        let clientWidth = window.innerWidth;
+        let offsetY = -val - (0.75 * clientWidth - 50) - 3;
+        this.$refs.tab.style["transform"] = `translateY(${offsetY}px)`;
+        this.$refs.tab.style["WebkitTransform"] = `translateY(${offsetY}px)`;
+      }
+    }
   }
 };
 </script>
 
 <style lang="stylus" scoped>
 .tabBox
+  position relative
   display flex
   justify-content space-around
   height .8rem
@@ -63,4 +81,5 @@ export default {
   font-size 0.35rem
   color #ccc
   border-radius .3rem .3rem 0 0 
+  z-index 10
 </style>

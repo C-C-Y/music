@@ -9,7 +9,7 @@
 <script>
 import Tab from "@/components/Tab.vue";
 import MenuSide from "@/components/MenuSide.vue";
-import { mapState } from "vuex";
+import { mapMutations } from "vuex";
 export default {
   name: "home",
   data() {
@@ -17,20 +17,23 @@ export default {
       menuInfo: {}
     };
   },
+  methods: {
+    ...mapMutations(["toggeleHomeMenu"])
+  },
   components: {
     Tab,
     MenuSide
   },
-  computed: {
-    ...mapState(["userId"])
-  },
-  created() {}
+  created() {},
+  deactivated() {
+    this.toggeleHomeMenu(false);
+  }
 };
 </script>
 
 <style lang="stylus" scoped>
 .home 
-  margin-top 1.2rem 
+  margin-top .95rem 
   padding-top .3rem
   background-color #333
   color #fff

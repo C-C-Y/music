@@ -1,6 +1,7 @@
 <template>
+
   <div id="app">
-    <keep-alive exclude="load">
+    <keep-alive exclude="['load','loadpage']">
       <router-view />
     </keep-alive>
     <!-- <player></player> -->

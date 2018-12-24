@@ -25,9 +25,11 @@ export default {
       type: Boolean,
       default: false
     },
-    canScroll: {
-      type: Boolean,
-      default: true
+    bounce: {
+      type: [Object, Boolean],
+      default() {
+        return true;
+      }
     }
   },
   methods: {
@@ -37,7 +39,8 @@ export default {
       } else {
         this.scroll = new BScroll(this.$refs.wrapper, {
           probeType: this.probeType,
-          click: this.click
+          click: this.click,
+          bounce: this.bounce
         });
         if (this.listenScroll) {
           let me = this;

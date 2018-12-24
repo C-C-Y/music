@@ -11,13 +11,25 @@ import Music from "../views/music/Music.vue";
 
 Vue.use(Router);
 
-export default new Router({
+const router = new Router({
   base: process.env.BASE_URL,
   routes: [
     {
       path: "/",
       name: "load",
       component: Load
+    },
+    {
+      path: "/loadPage",
+      name: "loadpage",
+      component: () => import("../views/loadpage/LoadPage.vue"),
+      beforeEnter: (to, from, next) => {
+        if (from.name !== "load") {
+          next(false);
+          return;
+        }
+        next();
+      }
     },
     {
       path: "/home",
@@ -67,12 +79,12 @@ export default new Router({
       path: "/personalpage/:userId",
       name: "person",
       component: () => import("../views/personalPage/PersonalPage.vue")
-    },
-    {
+    }
+    /* {
       path: "/search",
       name: "search",
       component: () => import("../base/test.vue")
-    }
+    } */
     /* {
       path: "/songlist/:id",
       name: "songlist",
@@ -91,3 +103,5 @@ export default new Router({
     } */
   ]
 });
+
+export default router;

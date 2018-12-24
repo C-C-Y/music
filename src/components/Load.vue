@@ -1,33 +1,13 @@
 <template>
   <div>
     <div class="load"
-         v-if="Load">
+         v-if="needLoad">
       <div class="bgTop"></div>
       <div class="content">
         <img src="../assets/img/logo.jpg"
              class="logo">
-        <div class="in">
-          <input type="text"
-                 v-model="phone"
-                 placeholder="手机号"
-                 class="phone text">
-        </div>
-        <div class="in">
-          <input type="password"
-                 v-model="password"
-                 placeholder="密码"
-                 class="password text">
-        </div>
-        <div class="loadText"
-             @click="userLoad()">
-          <span>登录</span>
-        </div>
-        <div class="test"
-             @click="jump">
-          <span>测试</span>
-        </div>
-        <span class="loadInfo"
-              v-show="infoShow">{{loadInfo}}</span>
+          <button class="loadbtn" @click="enterLoadPage()">手机号登陆</button>
+        <!--  -->
       </div>
     </div>
     <div v-else
@@ -36,70 +16,39 @@
 </template>
 
 <script>
-// @ is an alias to /src
+/* 
+ 1.登录页面需要单独搞一个,因为手机键盘会顶输入框
+ 2.登录成功没有提示,且首次登陆出现成功登陆后的画面
+ */
 import api from "@/api/api";
-import { mapMutations, mapState } from "vuex";
 export default {
   name: "load",
   data() {
     return {
-      phone: "",
-      password: "",
-      loadInfo: "",
-      infoShow: false
+      needLoad: false
     };
   },
-  computed: {
-    ...mapState(["userInfo"]),
-    Load() {
-      return !this.userInfo.id;
-    }
-  },
   methods: {
-    ...mapMutations(["ifUserInfo"]),
-    userLoad(loaded = false) {
-      let phone = loaded ? this.userInfo.phone : this.phone;
-      let password = loaded ? this.userInfo.password : this.password;
-      var x = `${api.url}/login/cellphone?phone=${phone}&password=${password}`;
-      this.$axios
-        .get(x, {
-          withCredentials: true
-        })
-        .then(result => {
-          if (result.status === 200 && !loaded) {
-            this.loadInfo = "登录成功";
-            this.infoShow = true;
-            let userObject = {
-              id: result.data.profile.userId,
-              nickname: result.data.profile.nickname,
-              phone,
-              password
-            };
-            this.ifUserInfo(userObject);
-            setTimeout(() => {
-              this.infoShow = false;
-              this.$router.push({ name: "home" });
-            }, 300);
-          } else if (result.status === 200 && loaded) {
-            setTimeout(() => {
-              this.$router.push({ name: "home" });
-            }, 2000);
-          }
-        })
-        .catch(err => {
-          console.log("账号或密码不对", err);
-          this.infoShow = true;
-          this.loadInfo = "账号或密码不对";
-        });
-    },
-    jump() {
-      localStorage.clear();
+    enterLoadPage() {
+      this.$router.push({ name: "loadpage" });
     }
   },
   created() {
-    if (localStorage.userInfo && JSON.parse(localStorage.userInfo).id) {
-      this.userLoad(true);
-    }
+    let url = `${api.url}/login/status`;
+    this.$axios
+      .get(url, {
+        withCredentials: true
+      })
+      .then(() => {
+        setTimeout(() => {
+          this.$router.push({ name: "home" });
+        }, 1500);
+      })
+      .catch(() => {
+        setTimeout(() => {
+          this.needLoad = true;
+        }, 1500);
+      });
   }
 };
 </script>
@@ -132,42 +81,37 @@ export default {
     flex-direction column
     align-items center
     .logo
-      width 3rem
-      height 2.6rem
-      margin-top 35%
+      width 3.2rem
+      height 2.3rem
+      margin-top 28%
     .loadText
-      font-size 0.5rem
+      font-size 0.4rem
+      margin-top .5rem
+      padding 0.15rem 0.7rem 0.15rem 1rem
+      border 0.01rem solid red
+      border-radius 0.8rem
+      letter-spacing 0.3rem
+    .loadbtn
+      padding 0.15rem 0.3rem
       margin-top 1rem
-      padding 0.2rem 0.9rem 0.2rem 1.2rem
-      border 0.04rem solid red
+      border 0.01rem solid red
       border-radius 0.8rem
-      letter-spacing 0.3rem
-    .test
-      font-size 0.5rem
-      margin-top 0.2rem
-      padding 0.2rem 0.9rem 0.2rem 1.2rem
-      background-color red
-      border 0.04rem solid red
-      border-radius 0.8rem
-      letter-spacing 0.3rem
+      width 5.3rem
+      height 1rem
+      background-color #000
+      font-size 0.4rem
+      letter-spacing 0.05rem
       color #eee
-    .in
-      display flex
-      flex-direction column
-      padding 0.2rem 0.4rem
-      margin-top 0.4rem
-      border 0.04rem solid red
-      border-radius 0.8rem
-      width 5.5rem
-      height 0.8rem
-      .text
-        flex 1
-        background-color #000
-        font-size 0.3rem
-        letter-spacing 0.05rem
-        color #eee
-      .text::-webkit-input-placeholder
-        color #bbb
+    .loadbtn:link
+      background-color red
+    .loadbtn:visited
+      background-color #000
+    .loadbtn:hover
+      background-color #000
+    .loadbtn:active
+      background-color red
+      /* .loadbtn::-webkit-input-placeholder
+        color #bbb */
     .loadInfo
       position absolute
       top 50%

@@ -19,7 +19,7 @@
             </svg>
             <span class="text">我的好友</span>
           </div>
-          <div class="option">
+          <div class="option" >
             <svg class="icon "
                  aria-hidden="true">
               <use xlink:href="#icon-clean"></use>
@@ -33,7 +33,7 @@
             </svg>
             <span class="text">夜间模式</span>
           </div>
-          <div class="option">
+          <div class="option" @click="unLoad()">
             <svg class="icon "
                  aria-hidden="true">
               <use xlink:href="#icon-tuichu"></use>
@@ -59,7 +59,6 @@ export default {
       personalInfo: null
     };
   },
-  mounted() {},
   computed: {
     ...mapState(["homeMenuShow", "userInfo"]),
     avatarUrl() {
@@ -83,8 +82,28 @@ export default {
   methods: {
     ...mapMutations(["toggeleHomeMenu"]),
     enterDeatil() {
-      this.$router.push(`/personalpage/${this.userInfo.id}`);
-      this.toggeleHomeMenu();
+      let userId = this.userInfo.id;
+      this.$router.push({ name: "person", params: { userId } });
+      this.toggeleHomeMenu(); //`/personalpage/${this.userInfo.id}`
+    },
+    unLoad() {
+      let url = `${api.url}/logout`;
+      this.$axios
+        .get(url, {
+          withCredentials: true
+        })
+        .then(() => {
+          console.log("unloadSucceed");
+          try {
+            localStorage.clear();
+          } catch (error) {
+            console.log(error);
+          }
+          this.$router.push({ name: "load" });
+        })
+        .catch(err => {
+          console.log(err);
+        });
     }
   },
   created() {
@@ -130,16 +149,16 @@ export default {
       flex-direction column
       justify-content flex-end
       padding-left 0.2rem
-      height 3.5rem
+      height 3rem
       background-color #888
       .avatar
-        width 1.4rem
-        height 1.4rem
+        width 1.2rem
+        height 1.2rem
         border-radius 1rem
       .nickName
         color #eee
         margin 0.2rem 0 0.3rem 0
-        font-size 0.4rem
+        font-size 0.35rem
     .options
       display flex
       flex-direction column
@@ -149,7 +168,7 @@ export default {
         align-items center
         height 0.7rem
         line-height 0.7rem
-        font-size 0.4rem
+        font-size 0.3rem
         padding-left 0.2rem
         .text
           margin-left 0.15rem
