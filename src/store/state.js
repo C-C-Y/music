@@ -1,3 +1,4 @@
+import { playMode } from "asset/js/config.js";
 let defaultUserInfo = {
   id: false
 };
@@ -11,5 +12,10 @@ try {
 
 export default {
   homeMenuShow: false,
-  userInfo: defaultUserInfo
+  userInfo: defaultUserInfo,
+  ifPlaying: false,
+  playingList: [],
+  fullScreen: false,
+  currentIndex: 0,
+  mode: playMode.sequence
 };

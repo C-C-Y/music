@@ -6,7 +6,7 @@ import News from "../views/news/News.vue";
 import Radio from "../views/radio/Radio.vue";
 import Personal from "../views/personal/Personal.vue";
 import MV from "../views/mv/MV.vue";
-import Load from "@/components/Load.vue";
+import Load from "../views/load/Load.vue";
 import Music from "../views/music/Music.vue";
 
 Vue.use(Router);
@@ -71,25 +71,23 @@ const router = new Router({
           component: MV
         }
       ]
-      /* children: [
-        
-      ] */
     },
     {
       path: "/personalpage/:userId",
       name: "person",
       component: () => import("../views/personalPage/PersonalPage.vue")
+    },
+    {
+      path: "/songlist/:listId",
+      name: "songlist",
+      component: () => import("../views/songlist/SongList.vue")
     }
     /* {
       path: "/search",
       name: "search",
       component: () => import("../base/test.vue")
     } */
-    /* {
-      path: "/songlist/:id",
-      name: "songlist",
-      component: () => import("../views/songlist/SongList.vue")
-    },
+    /*
     
     {
       path: "/singer/:id",

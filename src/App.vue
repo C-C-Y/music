@@ -1,17 +1,19 @@
 <template>
-
   <div id="app">
-    <keep-alive exclude="['load','loadpage']">
+    <keep-alive :exclude="['loadpage','songlist']">
       <router-view />
     </keep-alive>
-    <!-- <player></player> -->
+     <player></player> 
   </div>
 </template>
 
 <script>
+import Player from "comp/Player.vue";
 export default {
   name: "app",
-  components: {},
+  components: {
+    Player
+  },
   data() {
     return {
       loadShow: true

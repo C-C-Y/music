@@ -18,17 +18,20 @@
     
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
     <script>
-      let timestamp = new Date().getTime()+"";
-      console.log(typeof timestamp);
       
       //
       /* 
+      userid:407944839
+      songlist[2]id=580651692
+      获取歌单详情:/playlist/detail?id=580651692
       http://localhost:3000/login/cellphone?phone=18861831827&password=qq132013
       `http://localhost:3000/login/status&timestamp=${timestamp}`
       http://localhost:3000/login/status
       http://localhost:3000/logout
+      http://localhost:3000/user/playlist?uid=407944839
+      http://localhost:3000/playlist/detail?id=580651692
       */
-      axios.get(`http://localhost:3000/login/status`,{
+      axios.get(`http://localhost:3000/check/music?id=29436904`,{
         withCredentials: true 
       }).then((result) => {
         console.log(result.data);

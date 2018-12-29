@@ -42,6 +42,8 @@
 import api from "@/api/api";
 import PersonDetail from "comp/PersonDetail.vue";
 import scroll from "base/scroll.vue";
+import { prefixStyle } from "asset/js/dom.js";
+const transform = prefixStyle("transform");
 export default {
   name: "personalPage",
   data() {
@@ -133,8 +135,7 @@ export default {
         this.$refs.bg.style.height = "50px";
         this.$refs.filter.style.backgroundColor = "#222";
         this.$refs.bg.style.opacity = 1;
-        this.$refs.bg.style["transform"] = `translateY(0)`;
-        this.$refs.bg.style["WebkitTransform"] = `translateY(0)`;
+        this.$refs.bg.style[transform] = `translateY(0)`;
       } else if (newval < 0 && cardTop + newval > 50) {
         this.secondMove = 0;
         this.topNickname = false;
@@ -143,20 +144,15 @@ export default {
         this.$refs.bg.style.paddingBottom = `${bgPaddingBottom}px`;
         this.$refs.bg.style.height = 0;
         this.$refs.filter.style.backgroundColor = "rgba(7, 17, 27, 0.4)";
-        this.$refs.bg.style["transform"] = `translateY(${val}px)`;
-        this.$refs.bg.style["WebkitTransform"] = `translateY(${val}px)`;
-        this.$refs.userInfo.style["transform"] = `translateY(${val}px)`;
-        this.$refs.userInfo.style["WebkitTransform"] = `translateY(${val}px)`;
+        this.$refs.bg.style[transform] = `translateY(${val}px)`;
+        this.$refs.userInfo.style[transform] = `translateY(${val}px)`;
         this.$refs.bg.style.opacity = opacity;
         this.$refs.userInfo.style.opacity = opacity;
       } else {
         this.secondMove = 0;
         this.topNickname = false;
         this.canScroll = true;
-        this.$refs.userInfo.style["transform"] = `translateY(${newval}px)`;
-        this.$refs.userInfo.style[
-          "WebkitTransform"
-        ] = `translateY(${newval}px)`;
+        this.$refs.userInfo.style[transform] = `translateY(${newval}px)`;
       }
     }
   }

@@ -9,6 +9,12 @@ function sh(arr) {
   return _arr;
 }
 console.log(sh(x)); */
-let x = "http://localhost:8080/#/home/music/recommend";
-let y = /#(.*)/;
-console.log(x.replace(y, "#/loadPage"));
+/* let x = [1,2,3,4,5,6];
+x.splice(2,0,9);
+console.log(x); */
+let x = "abcxs";
+console.log(x[0]);
+console.log("x".toUpperCase);
+
+
+

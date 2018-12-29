@@ -4,7 +4,7 @@
          v-if="needLoad">
       <div class="bgTop"></div>
       <div class="content">
-        <img src="../assets/img/logo.jpg"
+        <img src="../../assets/img/logo.jpg"
              class="logo">
           <button class="loadbtn" @click="enterLoadPage()">手机号登陆</button>
         <!--  -->
@@ -16,10 +16,6 @@
 </template>
 
 <script>
-/* 
- 1.登录页面需要单独搞一个,因为手机键盘会顶输入框
- 2.登录成功没有提示,且首次登陆出现成功登陆后的画面
- */
 import api from "@/api/api";
 export default {
   name: "load",
@@ -67,7 +63,7 @@ export default {
     left 0
     right 0
     height 30%
-    background-image url('../assets/img/unload.jpg')
+    background-image url('../../assets/img/unload.jpg')
     background-size 100% 100%
     z-index 4
   .content
@@ -132,7 +128,7 @@ export default {
   bottom 0
   left 0
   right 0
-  background-image url('../assets/img/loaded.jpg')
+  background-image url('../../assets/img/loaded.jpg')
   background-repeat no-repeat
   background-size 100% 100%
 </style>

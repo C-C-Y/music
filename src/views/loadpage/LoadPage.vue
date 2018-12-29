@@ -121,11 +121,6 @@ export default {
     loadInfoHidden() {
       this.infoShow = false;
     }
-  },
-  beforeDestroy() {
-    console.log("des");
-    this.$refs.phone.value = "";
-    this.$refs.password.value = "";
   }
 };
 </script>

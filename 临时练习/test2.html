@@ -2,31 +2,39 @@
 <!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
 <!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
 <!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
-  <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title></title>
-    <meta name="description" content="">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="">
-  </head>
-  <body>
-    <!--[if lt IE 7]>
+<!--[if gt IE 8]><!-->
+<html class="no-js">
+<!--<![endif]-->
+
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title></title>
+  <meta name="description" content="">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="">
+</head>
+
+<body>
+  <!--[if lt IE 7]>
       <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="#">upgrade your browser</a> to improve your experience.</p>
     <![endif]-->
-    
-    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
-    <script>
-      axios.get("http://localhost:3000/user/detail?uid=407944839",{
-        withCredentials: true 
-      }).then((result) => {
-        console.log(result.data);
-        
-      }).catch((err) => {
-        console.log(err);
-        
-      });
-    </script>
-  </body>
+
+  <script src="http://rawgit.com/briangonzalez/rgbaster.js/master/rgbaster.js"></script>
+  <script>
+    var img = 'https://ss0.bdstatic.com/70cFvHSh_Q1YnxGkpoWK1HF6hhy/it/u=1886306620,2832764748&fm=26&gp=0.jpg'
+
+    RGBaster.colors(img, {
+      success: function (payload) {
+        // payload.dominant是主色，RGB形式表示
+        // payload.secondary是次色，RGB形式表示
+        // payload.palette是调色板，含多个主要颜色，数组
+        console.log(payload.dominant);
+        console.log(payload.secondary);
+        console.log(payload.palette);
+      }
+    });
+  </script>
+</body>
+
 </html>

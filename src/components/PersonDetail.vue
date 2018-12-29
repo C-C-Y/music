@@ -8,14 +8,13 @@
         <ul>
           <li v-for="item of songList.playlist"
               :key=item.id
-              class="list ">
+              class="list" @click="enterSongList(item.id)">
             <img :src="item.coverImgUrl"
                  alt=""
                  class="pic">
             <div class="desc border-bottom">
-              <div class="nameBox">
+              
                 <p class="name">{{item.name}}</p>
-              </div>
               <p class="record">{{item.trackCount+"首,播放"+item.playCount+"次"}}</p>
             </div>
           </li>
@@ -112,6 +111,16 @@ export default {
       }
       return desc;
     }
+  },
+  methods: {
+    enterSongList(id) {
+      this.$router.push({
+        name: "songlist",
+        params: {
+          listId: id
+        }
+      });
+    }
   }
 };
 </script>
@@ -142,16 +151,14 @@ export default {
       flex-direction column
       justify-content center
       padding-left 0.2rem
-      .nameBox
-        min-width 0
-        .name
-          width 90%
-          font-size 0.32rem
-          height 0.35rem
-          line-height 0.35rem
-          overflow hidden
-          white-space nowrap
-          text-overflow ellipsis
+      .name
+        max-width 75%vw
+        font-size 0.32rem
+        height 0.35rem
+        line-height 0.35rem
+        overflow hidden
+        white-space nowrap
+        text-overflow ellipsis
       .record
         margin-top .1rem  
         color #666 
