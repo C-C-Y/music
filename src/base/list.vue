@@ -4,6 +4,7 @@
           :listenScroll="needListen.listenScroll"
           @scroll="scroll"
           :bounce="bounce"
+          ref="ssee"
           >
     <div>
       <slot name="listTop"></slot>
@@ -117,7 +118,7 @@ export default {
   color #ccc
   .songItem
     position relative 
-    height 1rem
+    height 1.1rem
     width 100%
     display flex
     align-items center
@@ -134,13 +135,14 @@ export default {
       .songName
         font-size .32rem
       .authorAlbum
+        height .4rem
+        line-height .4rem
         font-size .25rem 
         max-width 70%vw
-        margin-top .1rem 
         white-space nowrap
         text-overflow ellipsis
-        color #999
-        overflow hidden
+        color #888
+        overflow-x  hidden
     .songOption
       position absolute
       right .4rem

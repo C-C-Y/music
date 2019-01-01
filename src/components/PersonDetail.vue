@@ -8,11 +8,11 @@
         <ul>
           <li v-for="item of songList.playlist"
               :key=item.id
-              class="list" @click="enterSongList(item.id)">
+              class="list border-bottom" @click="enterSongList(item.id)">
             <img :src="item.coverImgUrl"
                  alt=""
                  class="pic">
-            <div class="desc border-bottom">
+            <div class="desc ">
               
                 <p class="name">{{item.name}}</p>
               <p class="record">{{item.trackCount+"首,播放"+item.playCount+"次"}}</p>

@@ -5,10 +5,10 @@
       <div class="left"
            @touchmove.prevent>
         <div class="personalInfo"
-             ref="personalInfo" :style="bgc" @click="enterDeatil()">
+             ref="personalInfo needsclick" :style="bgc" @click="enterDeatil()">
           <img  
                alt=""
-               class="avatar" :src="avatarUrl">
+               class="avatar needsclick" :src="avatarUrl">
           <span class="nickName">{{nickname}}</span>
         </div>
         <div class="options">
@@ -83,8 +83,8 @@ export default {
     ...mapMutations(["toggeleHomeMenu"]),
     enterDeatil() {
       let userId = this.userInfo.id;
-      this.$router.push({ name: "person", params: { userId } });
-      this.toggeleHomeMenu(); //`/personalpage/${this.userInfo.id}`
+      this.$router.push(`/personalpage/${userId}`);
+      this.toggeleHomeMenu();
     },
     unLoad() {
       let url = `${api.url}/logout`;
@@ -149,12 +149,14 @@ export default {
       flex-direction column
       justify-content flex-end
       padding-left 0.2rem
-      height 3rem
+      height 4.5rem
       background-color #888
+      filter brightness(85%)
       .avatar
         width 1.2rem
         height 1.2rem
         border-radius 1rem
+        filter brightness(100%)
       .nickName
         color #eee
         margin 0.2rem 0 0.3rem 0
@@ -166,9 +168,9 @@ export default {
       .option
         display flex
         align-items center
-        height 0.7rem
-        line-height 0.7rem
-        font-size 0.3rem
+        height 0.8rem
+        line-height 0.8rem
+        font-size 0.32rem
         padding-left 0.2rem
         .text
           margin-left 0.15rem
@@ -176,4 +178,6 @@ export default {
     float right
     width 20%
     height 100vh
+    background-color #222
+    opacity .3
 </style>

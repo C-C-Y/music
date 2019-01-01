@@ -320,6 +320,7 @@ export default {
         margin-left 0.2rem
         margin-right 0.2rem
         min-width 60%
+        color #eee
         .listName
           font-size 0.35rem
           text-align left
@@ -369,7 +370,7 @@ export default {
   bottom 0
   display flex
   flex-direction column
-  z-index 15
+  z-index 200
   .optionTop
     width 100%
     flex 1

@@ -196,7 +196,7 @@ export default {
       height 1.2rem
       border-radius 1rem
     .extraInfo
-      color #ccc
+      color #999
       font-size 0.25rem
       margin-top 0.3rem
   .background

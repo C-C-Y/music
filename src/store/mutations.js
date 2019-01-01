@@ -34,7 +34,7 @@ export default {
     state.fullScreen = flag;
   },
   setPlayMode(state, mode) {
-    state.playMode = mode;
+    state.mode = mode;
   },
   setCurrentIndex(state, index) {
     state.currentIndex = index;

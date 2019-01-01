@@ -16,6 +16,6 @@ export default {
   ifPlaying: false,
   playingList: [],
   fullScreen: false,
-  currentIndex: 0,
+  currentIndex: -1,
   mode: playMode.sequence
 };
