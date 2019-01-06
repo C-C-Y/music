@@ -9,7 +9,7 @@
       <span class="loadWay">手机号登陆</span>
     </div>
     <div class="inputBox">
-      <div class="phoneBox">
+      <div class="phoneBox border-bottom">
         <svg class="icon"
              aria-hidden="true">
           <use xlink:href="#icon-shouji"></use>
@@ -22,7 +22,7 @@
                @focus="loadInfoHidden()"
                ref="phone">
       </div>
-      <div class="passwordBox">
+      <div class="passwordBox border-bottom">
         <svg class="icon"
              aria-hidden="true">
           <use xlink:href="#icon-mima"></use>
@@ -54,11 +54,12 @@ export default {
       phone: "",
       password: "",
       loadInfo: "",
-      infoShow: false
+      infoShow: false,
+      loadingShow: false
     };
   },
   methods: {
-    ...mapMutations(["ifUserInfo"]),
+    ...mapMutations(["setUserId"]),
     phoneInput() {
       let val = event.target.value.replace(/[^\d]/g, "");
       event.target.value = val;
@@ -73,6 +74,7 @@ export default {
       this.$router.go(-1);
     },
     loadBtnPress() {
+      this.loadingShow = true;
       let phoneLength = this.phone.length;
       let passwordLength = this.password.length;
       if (phoneLength == 0) {
@@ -101,15 +103,7 @@ export default {
           withCredentials: true
         })
         .then(result => {
-          let userObject = {
-            id: result.data.profile.userId,
-            nickname: result.data.profile.nickname,
-            phone,
-            password
-          };
-          this.ifUserInfo(userObject);
-          this.$refs.phone.value = "";
-          this.$refs.password.value = "";
+          this.setUserId(result.data.profile.userId);
           this.$router.push({ name: "home" });
         })
         .catch(err => {
@@ -126,6 +120,11 @@ export default {
 </script>
 
 <style lang="stylus" scoped>
+.border-bottom
+  &:before 
+    border-color #333
+    left .1rem
+    width 95%
 .loadBox
   position fixed
   top 0
@@ -147,10 +146,10 @@ export default {
       margin-left 0.35rem
   .inputBox
     margin-top 5%
-    left 0.2rem
     font-size 0.6rem
+    padding 0 .2rem
     .phoneBox, .passwordBox
-      margin-top 3%
+      margin-top 8%
       display flex
       align-items center
       .phone, .password

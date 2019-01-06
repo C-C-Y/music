@@ -4,8 +4,8 @@
          v-show="homeMenuShow">
       <div class="left"
            @touchmove.prevent>
-        <div class="personalInfo"
-             ref="personalInfo needsclick" :style="bgc" @click="enterDeatil()">
+        <div class="userInfo"
+             ref="userInfo needsclick" :style="bgc" @click="enterDeatil()">
           <img  
                alt=""
                class="avatar needsclick" :src="avatarUrl">
@@ -54,23 +54,16 @@ import api from "@/api/api";
 import { mapState, mapMutations } from "vuex";
 export default {
   name: "menuside",
-  data() {
-    return {
-      personalInfo: null
-    };
-  },
   computed: {
-    ...mapState(["homeMenuShow", "userInfo"]),
+    ...mapState(["homeMenuShow", "userInfo", "userId"]),
     avatarUrl() {
-      return this.personalInfo ? this.personalInfo.profile.avatarUrl : "";
+      return this.userInfo.profile.avatarUrl;
     },
     nickname() {
-      return this.personalInfo ? this.personalInfo.profile.nickname : "";
+      return this.userInfo.profile.nickname;
     },
     bgc() {
-      let bgcUrl = this.personalInfo
-        ? `url(${this.personalInfo.profile.backgroundUrl})`
-        : "";
+      let bgcUrl = `url(${this.userInfo.profile.backgroundUrl})`;
       return {
         backgroundImage: bgcUrl,
         backgroundSize: "cover",
@@ -80,9 +73,9 @@ export default {
     }
   },
   methods: {
-    ...mapMutations(["toggeleHomeMenu"]),
+    ...mapMutations(["toggeleHomeMenu", "clearPlayList", "setFresh"]),
     enterDeatil() {
-      let userId = this.userInfo.id;
+      let userId = this.userId;
       this.$router.push(`/personalpage/${userId}`);
       this.toggeleHomeMenu();
     },
@@ -93,44 +86,35 @@ export default {
           withCredentials: true
         })
         .then(() => {
-          console.log("unloadSucceed");
+          this.clearPlayList();
+          this.setFresh();
           try {
             localStorage.clear();
           } catch (error) {
             console.log(error);
           }
-          this.$router.push({ name: "load" });
+          setTimeout(() => {
+            this.$router.push({ name: "load" });
+          }, 1000);
         })
         .catch(err => {
           console.log(err);
         });
     }
-  },
-  created() {
-    this.$nextTick(() => {
-      this.$axios
-        .get(`${api.url}/user/detail?uid=${this.userInfo.id}`, {
-          withCredentials: true
-        })
-        .then(result => {
-          this.personalInfo = result.data;
-        })
-        .catch(err => {
-          console.log(err);
-        });
-    });
   }
 };
 </script>
 
 <style lang="stylus" scoped>
 .menu-enter-active, .menu-leave-active
-  transition all 0.3s linear
-  transform translateX(0)
-  opacity 1
+  transition all 0.3s 
+  .left
+    transition all .3s 
+    transform translateX(0)
+    opacity 1
 .menu-enter, .menu-leave-to
-  transform translateX(-100%)
-  opacity 0
+  .left
+    transform translateX(-100%)
 .menuSide
   position fixed
   top 0
@@ -139,24 +123,24 @@ export default {
   z-index 20
   overflow hidden
   .left
+    position absolute
     width 80%
     height 100vh
-    float left
     background-color #333
     color #bbb
-    .personalInfo
+    z-index 20
+    .userInfo
       display flex
       flex-direction column
       justify-content flex-end
       padding-left 0.2rem
       height 4.5rem
       background-color #888
-      filter brightness(85%)
+      filter brightness(90%)
       .avatar
         width 1.2rem
         height 1.2rem
         border-radius 1rem
-        filter brightness(100%)
       .nickName
         color #eee
         margin 0.2rem 0 0.3rem 0
@@ -175,9 +159,10 @@ export default {
         .text
           margin-left 0.15rem
   .right
-    float right
-    width 20%
+    position absolute
+    width 100%
     height 100vh
     background-color #222
     opacity .3
+    z-index 1
 </style>

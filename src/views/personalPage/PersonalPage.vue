@@ -1,5 +1,5 @@
 <template>
-  <div v-if="personalInfo.profile && songlist.playlist"
+  <div v-if="personalInfo.profile && songlist"
        class="personPage">
     <div class="back">
       <svg class="icon"
@@ -24,7 +24,7 @@
       <div class="filter"
            ref="filter"></div>
     </div>
-    <scroll :data="[songlist.playlist,personalInfo.profile]"
+    <scroll :data="[songlist,personalInfo.profile]"
             class="card"
             @scroll="scroll"
             :listenScroll="listenScroll"
@@ -43,13 +43,14 @@ import api from "@/api/api";
 import PersonDetail from "comp/PersonDetail.vue";
 import scroll from "base/scroll.vue";
 import { prefixStyle } from "asset/js/dom.js";
+import { mapGetters } from "vuex";
 const transform = prefixStyle("transform");
 export default {
   name: "personalPage",
   data() {
     return {
       personalInfo: {},
-      songlist: {},
+      songlist: [],
       scrollY: 0,
       canScroll: true,
       secondMove: 0,
@@ -67,6 +68,7 @@ export default {
     scroll
   },
   computed: {
+    ...mapGetters(["userId", "userInfo", "userSongList"]),
     avatar() {
       let avatarUrl = "";
       if (this.personalInfo.profile.avatarUrl) {
@@ -95,29 +97,37 @@ export default {
     },
     scroll(pos) {
       this.scrollY = pos.y;
+    },
+    getData(id) {
+      let getUserDetail = this.$axios.get(`${api.url}/user/detail?uid=${id}`, {
+        withCredentials: true
+      });
+      let getSongList = this.$axios.get(`${api.url}/user/playlist?uid=${id}`, {
+        withCredentials: true
+      });
+      this.$axios
+        .all([getUserDetail, getSongList])
+        .then(
+          this.$axios.spread((detail, songlist) => {
+            this.personalInfo = detail.data;
+            this.songlist = songlist.data.playlist;
+          })
+        )
+        .catch(err => {
+          console.log(err);
+        });
     }
   },
   created() {
     this.probeType = 3;
     this.listenScroll = true;
     let id = this.$route.params.userId;
-    let getUserDetail = this.$axios.get(`${api.url}/user/detail?uid=${id}`, {
-      withCredentials: true
-    });
-    let getSongList = this.$axios.get(`${api.url}/user/playlist?uid=${id}`, {
-      withCredentials: true
-    });
-    this.$axios
-      .all([getUserDetail, getSongList])
-      .then(
-        this.$axios.spread((detail, songlist) => {
-          this.personalInfo = detail.data;
-          this.songlist = songlist.data;
-        })
-      )
-      .catch(err => {
-        console.log(err);
-      });
+    if (id === this.userId && this.userSongList.length) {
+      this.personalInfo = this.userInfo;
+      this.songlist = this.userSongList;
+    } else {
+      this.getData(id);
+    }
   },
   watch: {
     scrollY(newval) {

@@ -33,6 +33,14 @@ export default {
     secondMove: {
       type: [Number, String],
       default: 0
+    },
+    topHeight: {
+      type: Number,
+      default: 50
+    },
+    topPercent: {
+      type: Number,
+      default: 0.75
     }
   },
   data() {
@@ -58,12 +66,13 @@ export default {
     secondMove(val) {
       if (val == 0) {
         this.$refs.tab.style["transform"] = "translateY(0)";
-        this.$refs.tab.style["WebkitTransform"] = "translateY(0)";
+        this.$refs.tab.style["webkitTransform"] = "translateY(0)";
       } else {
         let clientWidth = window.innerWidth;
-        let offsetY = -val - (0.75 * clientWidth - 50) - 3;
+        let offsetY =
+          -val - (this.topPercent * clientWidth - this.topHeight) - 3;
         this.$refs.tab.style["transform"] = `translateY(${offsetY}px)`;
-        this.$refs.tab.style["WebkitTransform"] = `translateY(${offsetY}px)`;
+        this.$refs.tab.style["webkitTransform"] = `translateY(${offsetY}px)`;
       }
     }
   }

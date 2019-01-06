@@ -1,7 +1,6 @@
 <template>
   <div class="songListBox"
-       v-if="playlist && playlist.tracks"
-       >
+       v-if="playlist && playlist.tracks">
     <div class="backBox"
          ref="backBox">
     </div>
@@ -15,6 +14,7 @@
     <span class="topListName"
           v-show="!topNameShow">歌单</span>
     <list :songlist="playlist.tracks"
+          :unablePlayIdList="unablePlayIdList"
           :needListenScroll="true"
           @scroll="scroll"
           @showMenu="showOptionMenu"
@@ -57,12 +57,14 @@
       </div>
       <div slot="listHeader"
            class="listHeader">
-        <svg class="icon playIcon"
-             aria-hidden="true">
-          <use xlink:href="#icon-bofang1"></use>
-        </svg>
-        <span class="playAll">播放全部</span>
-        <span class="count">{{"(共"+playlist.trackCount+"首)"}}</span>
+        <div class="playAllSong" @click.stop="playAll()">
+          <svg class="icon playIcon"
+               aria-hidden="true">
+            <use xlink:href="#icon-bofang1"></use>
+          </svg>
+          <span class="playAll">播放全部</span>
+          <span class="count">{{"(共"+playlist.trackCount+"首)"}}</span>
+        </div>
       </div>
     </list>
     <transition name="option">
@@ -109,14 +111,16 @@
         </div>
       </div>
     </transition>
-    <div class="noCopyright" v-if="noPlay" @touchstart="hiddenAlert">
+    <div class="noCopyright"
+         v-if="noPlay"
+         @touchstart="hiddenAlert">
       <span class="alertText">很抱歉,这首歌暂无版权</span>
     </div>
   </div>
 </template>
 
 <script>
-import { mapActions } from "vuex";
+import { mapActions, mapGetters, mapMutations } from "vuex";
 import list from "base/list.vue";
 import api from "@/api/api";
 export default {
@@ -129,10 +133,14 @@ export default {
       albumOption: true,
       bounce: false,
       topNameShow: false,
-      noPlay: false
+      noPlay: false,
+      unablePlayIdList: [],
+      canplayIdList: [],
+      songPlayList: []
     };
   },
   computed: {
+    ...mapGetters(["unablePlayList"]),
     listBg() {
       let bg = `url('${this.playlist.tracks[0].al.picUrl}')`;
       return {
@@ -154,6 +162,26 @@ export default {
   },
   methods: {
     ...mapActions(["selectPlay"]),
+    ...mapMutations(["setUnablePlayList"]),
+    playAll() {
+      this.selectPlay({ list: this.songPlayList, index: 0 });
+    },
+    checkPlay(idList, songlist) {
+      let unablePlayList = [];
+      let canplayIdList = [];
+      let songPlayList = [];
+      idList.forEach((item, index) => {
+        if (item.subp == 0) {
+          unablePlayList.push(item.id);
+        } else {
+          songPlayList.push(songlist[index]);
+          canplayIdList.push(item.id);
+        }
+      });
+      this.unablePlayIdList = unablePlayList;
+      this.canplayIdList = canplayIdList;
+      this.songPlayList = songPlayList;
+    },
     hiddenAlert() {
       this.noPlay = false;
     },
@@ -161,15 +189,13 @@ export default {
       this.$router.go(-1);
     },
     playThis(index) {
-      this.$axios
-        .get(`${api.url}/check/music?id=${this.playlist.tracks[index].id}`)
-        .then(() => {
-          this.selectPlay({ list: this.playlist.tracks, index });
-        })
-        .catch(err => {
-          console.log(err);
-          this.noPlay = true;
-        });
+      let id = this.playlist.tracks[index].id;
+      if (this.unablePlayIdList.includes(id)) {
+        this.noPlay = true;
+      } else {
+        let songIndex = this.canplayIdList.indexOf(id);
+        this.selectPlay({ list: this.songPlayList, index: songIndex });
+      }
     },
     scroll(pos) {
       let listTopHeight = window.innerHeight * 0.4;
@@ -207,6 +233,7 @@ export default {
       })
       .then(result => {
         this.playlist = result.data.playlist;
+        this.checkPlay(result.data.privileges, result.data.playlist.tracks);
       })
       .catch(err => {
         console.log(err);
@@ -258,7 +285,7 @@ export default {
   left 0
   right 0
   bottom 0
-  opacity .6
+  opacity 0.6
   background-color #444
   display flex
   justify-content center
@@ -268,12 +295,12 @@ export default {
   .alertText
     background-color #fff
     height 1rem
-    line-height 1rem 
+    line-height 1rem
     text-align center
-    font-size .35rem
-    padding 0 .2rem
-    border-radius .2rem
-    opacity .7
+    font-size 0.35rem
+    padding 0 0.2rem
+    border-radius 0.2rem
+    opacity 0.7
 .wrapper
   position fixed
   top 0
@@ -347,21 +374,21 @@ export default {
             .nickName
               margin-right 0.05rem
   .listHeader
-    display flex
-    align-items center
-    padding-left 0.2rem
-    width 100%
     height 0.8rem
-    line-height 0.8rem
     background-color #333
     color #ccc
     font-size 0.4rem
-    .playAll
-      font-size 0.35rem
-      margin-left 0.2rem
-    .count
-      font-size 0.3rem
-      color #999
+    .playAllSong
+      display flex
+      align-items center
+      padding-left 0.2rem
+      height 100%
+      .playAll
+        font-size 0.32rem
+        margin-left 0.2rem
+      .count
+        font-size 0.3rem
+        color #999
 .OptionDetail
   position fixed
   top 1rem

@@ -4,11 +4,11 @@
           :listenScroll="needListen.listenScroll"
           @scroll="scroll"
           :bounce="bounce"
-          ref="ssee"
-          >
+          ref="ssee">
     <div>
       <slot name="listTop"></slot>
-      <div class="listContent" ref="listContent">
+      <div class="listContent"
+           ref="listContent">
         <slot name="listHeader"></slot>
         <div class="songsBox">
           <ul>
@@ -16,13 +16,16 @@
                 :key="song.id"
                 class="songItem border-bottom"
                 @click="playThis(index)">
-              <span class="songIndex" v-if="!songImgShow">{{index+1}}</span>
+              <span class="songIndex"
+                    v-if="!songImgShow">{{index+1}}</span>
               <img :src="song.al.picUrl"
                    class="songImg"
                    v-if="songImgShow">
-              <div class="songInfo">
+              <div class="songInfo"
+                   :class="{'noCopyright':unablePlayIdList.includes(song.id)}">
                 <span class="songName">{{song.name}}</span>
-                <span class="authorAlbum">{{song.ar[0].name+"-"+song.al.name}}</span>
+                <span class="authorAlbum"
+                      :class="{'noCopyright':unablePlayIdList.includes(song.id)}">{{song.ar[0].name+"-"+song.al.name}}</span>
               </div>
               <svg class="icon songOption"
                    aria-hidden="true"
@@ -59,6 +62,10 @@ export default {
       default() {
         return [];
       }
+    },
+    unablePlayIdList: {
+      type: Array,
+      default: null
     },
     songImgShow: {
       type: Boolean,
@@ -111,20 +118,23 @@ export default {
 
 <style lang="stylus" scoped>
 .border-bottom
-  &:before  
+  &:before
     border-color #333
+.noCopyright
+  color #777 !important
 .listContent
   background-color #222
   color #ccc
+  padding-bottom 1.25rem
   .songItem
-    position relative 
+    position relative
     height 1.1rem
     width 100%
     display flex
     align-items center
     .songIndex
-      font-size .35rem
-      width .8rem
+      font-size 0.35rem
+      width 0.8rem
       text-align center
     .songImg
       height 80%
@@ -133,19 +143,19 @@ export default {
       display flex
       flex-direction column
       .songName
-        font-size .32rem
+        font-size 0.32rem
       .authorAlbum
-        height .4rem
-        line-height .4rem
-        font-size .25rem 
-        max-width 70%vw
+        height 0.4rem
+        line-height 0.4rem
+        font-size 0.25rem
+        max-width 70% vw
         white-space nowrap
         text-overflow ellipsis
-        color #888
-        overflow-x  hidden
+        color #999
+        overflow-x hidden
     .songOption
       position absolute
-      right .4rem
-      font-size .35rem
+      right 0.4rem
+      font-size 0.35rem
       color #999
 </style>

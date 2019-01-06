@@ -1,12 +1,13 @@
 <template>
-  <div>
+  <div v-show="!needFresh">
     <div class="load"
          v-if="needLoad">
       <div class="bgTop"></div>
       <div class="content">
         <img src="../../assets/img/logo.jpg"
              class="logo">
-          <button class="loadbtn" @click="enterLoadPage()">手机号登陆</button>
+        <button class="loadbtn"
+                @click="enterLoadPage()">手机号登陆</button>
         <!--  -->
       </div>
     </div>
@@ -16,7 +17,9 @@
 </template>
 
 <script>
-import api from "@/api/api";
+import api from "@/api/api.js";
+import { mapGetters } from "vuex";
+
 export default {
   name: "load",
   data() {
@@ -29,22 +32,36 @@ export default {
       this.$router.push({ name: "loadpage" });
     }
   },
+  computed: {
+    ...mapGetters(["needFresh"])
+  },
+  mounted() {
+    this.$nextTick(() => {
+      let url = `${api.url}/login/status`;
+      this.$axios
+        .get(url, {
+          withCredentials: true
+        })
+        .then(() => {
+          setTimeout(() => {
+            this.$router.push({ name: "home" });
+          }, 1500);
+        })
+        .catch(() => {
+          setTimeout(() => {
+            this.needLoad = true;
+          }, 1500);
+        });
+    });
+  },
   created() {
-    let url = `${api.url}/login/status`;
-    this.$axios
-      .get(url, {
-        withCredentials: true
-      })
-      .then(() => {
-        setTimeout(() => {
-          this.$router.push({ name: "home" });
-        }, 1500);
-      })
-      .catch(() => {
-        setTimeout(() => {
-          this.needLoad = true;
-        }, 1500);
-      });
+    if (this.needFresh) {
+      window.location.reload();
+    }
+    /* let url = `${api.url}//logout`;
+    this.$axios.get(url, {
+      withCredentials: true
+    });*/
   }
 };
 </script>
@@ -71,7 +88,7 @@ export default {
     top 0
     bottom 0
     right 0
-    left 0  
+    left 0
     z-index 5
     display flex
     flex-direction column
@@ -82,7 +99,7 @@ export default {
       margin-top 28%
     .loadText
       font-size 0.4rem
-      margin-top .5rem
+      margin-top 0.5rem
       padding 0.15rem 0.7rem 0.15rem 1rem
       border 0.01rem solid red
       border-radius 0.8rem
@@ -106,8 +123,6 @@ export default {
       background-color #000
     .loadbtn:active
       background-color red
-      /* .loadbtn::-webkit-input-placeholder
-        color #bbb */
     .loadInfo
       position absolute
       top 50%

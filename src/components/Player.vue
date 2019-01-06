@@ -33,21 +33,30 @@
             <div class="baseWrapper">
             </div>
             <div class="outerWrapper"
-                 ref="rotateCD">
+                 ref="rotateCD" :style="{animationPlayState:ifRotate}">
               <img :src="album.picUrl"
                    alt=""
                    class="cd">
             </div>
             <div class="userAction">
-              <svg class="icon likeIcon"
-                   aria-hidden="true">
+              <svg class="icon unlike"
+                   aria-hidden="true"
+                   v-show="!ifLiked"
+                   @click.stop="likeOrdislike(true)">
                 <use xlink:href="#icon-xihuan1"></use>
+              </svg>
+              <svg class="icon liked"
+                   aria-hidden="true"
+                   v-show="ifLiked"
+                   @click.stop="likeOrdislike(false)">
+                <use xlink:href="#icon-xihuan2"></use>
               </svg>
               <svg class="icon"
                    aria-hidden="true">
                 <use xlink:href="#icon-weibiaoti-"></use>
               </svg>
               <svg class="icon"
+                   @click.stop="toggleShowOption"
                    aria-hidden="true">
                 <use xlink:href="#icon-icon"></use>
               </svg>
@@ -57,16 +66,15 @@
                   class="commonWrapper lyricPage"
                   :data="lyricObj&&lyricObj.lines"
                   :bounce="false"
-                  ref="lyricList">
-            <div class="lyricWrapper" @click="enterCD">
-              <div v-if="lyricObj">
-                <p class="lyricLine"
-                   :class="{'current':currentLineNum===index}"
-                   v-for="(line, index) in lyricObj.lines"
-                   :key="line.time"
-                   ref="line"
-                   >{{line.txt}}</p>
-              </div>
+                  ref="lyricList"
+                  v-if="lyricObj">
+            <div class="lyricWrapper"
+                 @click="enterCD">
+              <p class="lyricLine"
+                 :class="{'current':currentLineNum===index}"
+                 v-for="(line, index) in lyricObj.lines"
+                 :key="line.time"
+                 ref="line">{{line.txt}}</p>
             </div>
           </scroll>
         </div>
@@ -81,19 +89,19 @@
             <svg class="icon fade"
                  aria-hidden="true"
                  v-show="Mode==2"
-                 @click="changeMode(2)">
+                 @click="changeMode()">
               <use xlink:href="#icon-suijibofang"></use>
             </svg>
             <svg class="icon fade"
                  aria-hidden="true"
                  v-show="Mode==0"
-                 @click="changeMode(0)">
+                 @click="changeMode()">
               <use xlink:href="#icon-xunhuanbofang"></use>
             </svg>
             <svg class="icon fade"
                  aria-hidden="true"
                  v-show="Mode==1"
-                 @click="changeMode(1)">
+                 @click="changeMode()">
               <use xlink:href="#icon-danquxunhuan"></use>
             </svg>
             <svg class="icon"
@@ -119,7 +127,8 @@
               <use xlink:href="#icon-49xiayishou"></use>
             </svg>
             <svg class="icon fade"
-                 aria-hidden="true">
+                 aria-hidden="true"
+                 @click.stop="showList">
               <use xlink:href="#icon-liebiao"></use>
             </svg>
           </div>
@@ -151,11 +160,20 @@
           </svg>
         </circle-progress>
         <svg class="icon fade miniMenu"
-             aria-hidden="true">
+             aria-hidden="true"
+             @click.stop="showList">
           <use xlink:href="#icon-liebiao"></use>
         </svg>
       </div>
     </transition>
+    <options :currentSong="currentSong"
+             :commentShow="false"
+             v-if="optionShow"
+             @close="toggleShowOption"></options>
+    <play-list v-if="listShow"
+               @closeList="closeList"
+               @changeMode="changeMode"
+               :specialShow="listShow"></play-list>
     <audio :src="songUrl"
            ref="audio"
            @canplay="play"
@@ -163,7 +181,7 @@
            @ended="playEnd"
            @loadedmetadata="showTotalTime"
            @timeupdate="updateTime"
-           autoplay="true"></audio>
+           :autoplay="true&&!initPlay"></audio>
   </div>
 </template>
 
@@ -174,6 +192,8 @@ import { mapGetters, mapMutations } from "vuex";
 import bar from "base/bar.vue";
 import scroll from "base/scroll.vue";
 import CircleProgress from "base/circleProgress.vue";
+import options from "base/options.vue";
+import PlayList from "comp/PlayList.vue";
 export default {
   name: "player",
   data() {
@@ -187,13 +207,17 @@ export default {
       currentLineNum: -1,
       hasUpTop: true,
       firstTime: 0,
-      currentLyric: null
+      currentLyric: null,
+      optionShow: false,
+      listShow: false
     };
   },
   components: {
     bar,
     CircleProgress,
-    scroll
+    scroll,
+    options,
+    PlayList
   },
   computed: {
     ...mapGetters([
@@ -202,8 +226,17 @@ export default {
       "ifPlaying",
       "currentIndex",
       "Mode",
-      "currentSong"
+      "currentSong",
+      "likedIdList",
+      "initPlay",
+      "songNoChange"
     ]),
+    ifRotate() {
+      return this.ifPlaying ? "running" : "paused";
+    },
+    ifLiked() {
+      return this.likedIdList.includes(this.currentSong.id);
+    },
     lyricOrName() {
       if (this.ifPlaying && this.currentLyric) {
         return this.currentLyric;
@@ -241,8 +274,36 @@ export default {
       "setFullSCreen",
       "setPlayingState",
       "setPlayMode",
-      "setCurrentIndex"
+      "setCurrentIndex",
+      "changeLikeList",
+      "setInitPlay",
+      "setChangeStatus"
     ]),
+    showList() {
+      this.listShow = true;
+    },
+    closeList() {
+      this.listShow = false;
+    },
+    toggleShowOption() {
+      this.optionShow = !this.optionShow;
+    },
+    likeOrdislike(tag) {
+      this.$axios
+        .get(`${api.url}/like?id=${this.currentSong.id}&like=${tag}`, {
+          withCredentials: true
+        })
+        .then(() => {
+          let songInfo = {
+            id: this.currentSong.id,
+            tag
+          };
+          this.changeLikeList(songInfo);
+        })
+        .catch(err => {
+          console.log(err);
+        });
+    },
     enterLyric() {
       if (this.ifPlaying) {
         this.$refs.rotateCD.style.animationPlayState = "paused";
@@ -265,13 +326,25 @@ export default {
         this.lyricObj.seek(newTime * 1000);
       }
     },
+    nextSequenceIndex(index, tag) {
+      let newIndex = null;
+      if (tag) {
+        newIndex = index == this.playingList.length - 1 ? 0 : index + 1;
+        return newIndex;
+      } else {
+        newIndex = index == 0 ? this.playingList.length - 1 : index - 1;
+        return newIndex;
+      }
+    },
     playEnd() {
       let index = -1;
+      if (this.playingList.length == 1) {
+        this.$refs.audio.play();
+        this.lyricObj.seek(0);
+        return;
+      }
       if (this.Mode == 0) {
-        index =
-          this.currentIndex == this.playingList.length - 1
-            ? 0
-            : this.currentIndex + 1;
+        index = this.nextSequenceIndex(this.currentIndex, true);
         this.setCurrentIndex(index);
         return;
       } else if (this.Mode == 1) {
@@ -286,10 +359,7 @@ export default {
     previous() {
       let index = -1;
       if (this.Mode == 0 || this.Mode == 1) {
-        index =
-          this.currentIndex == 0
-            ? this.playingList.length - 1
-            : this.currentIndex - 1;
+        index = this.nextSequenceIndex(this.currentIndex, false);
         this.setCurrentIndex(index);
       } else {
         index = Math.floor(Math.random() * this.playingList.length);
@@ -299,22 +369,21 @@ export default {
     next() {
       let index = -1;
       if (this.Mode == 0 || this.Mode == 1) {
-        index =
-          this.currentIndex == this.playingList.length - 1
-            ? 0
-            : this.currentIndex + 1;
+        index = this.nextSequenceIndex(this.currentIndex, true);
         this.setCurrentIndex(index);
       } else {
         index = Math.floor(Math.random() * this.playingList.length);
         this.setCurrentIndex(index);
       }
     },
-    changeMode(mode) {
-      let newMode = "";
-      newMode = mode == 2 ? 0 : mode + 1;
+    changeMode() {
+      let newMode = this.Mode == 2 ? 0 : this.Mode + 1;
       this.setPlayMode(newMode);
     },
     play() {
+      if (this.initPlay) {
+        return;
+      }
       if (!this.$refs.audio.currentTime) {
         this.lyricObj.play();
       }
@@ -325,12 +394,22 @@ export default {
     },
     closeFullScreen() {
       this.setFullSCreen(false);
-      this.CDshow = true;
     },
     open() {
+      this.CDshow = true;
       this.setFullSCreen(true);
+      setTimeout(() => {
+        this.$refs.lyricList.scroll.refresh();
+        let lineEl = this.$refs.line[this.currentLineNum - 5];
+        this.$refs.lyricList.scroll.scrollToElement(lineEl, 100);
+      }, 20);
     },
     play_pause() {
+      if (this.initPlay) {
+        this.setInitPlay();
+        this.play();
+        return;
+      }
       const audio = this.$refs.audio;
       if (this.ifPlaying) {
         audio.pause();
@@ -341,7 +420,7 @@ export default {
       this.lyricObj.togglePlay();
     },
     pieceTime(time) {
-      let minutes = Math.round(time / 60);
+      let minutes = Math.floor(time / 60);
       let seconds = Math.round(time % 60);
       minutes = minutes < 10 ? "0" + minutes : minutes;
       seconds = seconds < 10 ? "0" + seconds : seconds;
@@ -352,25 +431,21 @@ export default {
       this.songTime = this.$refs.audio.duration;
     },
     updateTime() {
-      this.currentTime = this.$refs.audio.currentTime;
+      if (this.currentSong) {
+        this.currentTime = this.$refs.audio.currentTime;
+      }
     },
     handleLyric({ lineNum, txt }) {
       this.currentLineNum = lineNum;
-      if (lineNum > 5 && this.$refs.lyricList) {
+      if (lineNum > 5) {
         let lineEl = this.$refs.line[lineNum - 5];
         this.$refs.lyricList.scroll.scrollToElement(lineEl, 1000);
         this.hasUpTop = false;
-      } else {
+      } else if (this.$refs.lyricList) {
         this.$refs.lyricList.scroll.scrollTo(0, 0, 1000);
         this.hasUpTop = true;
       }
       this.currentLyric = txt;
-    },
-    parseLyric() {
-      this.lyricObj = new Lyric(this.lyric, this.handleLyric);
-      if (this.ifPlaying) {
-        this.lyricObj.play();
-      }
     },
     getData(val) {
       let getSongUrl = this.$axios.get(`${api.url}/song/url?id=${val.id}`);
@@ -394,23 +469,31 @@ export default {
   },
   watch: {
     currentSong(val, oldval) {
-      if (this.lyricObj) {
+      if (val) {
+        if (oldval === val) {
+          if (this.songNoChange) {
+            this.setChangeStatus(false);
+          }
+          return;
+        }
+        if (
+          this.lyricObj &&
+          this.$refs.lyricList.scroll &&
+          !this.songNoChange
+        ) {
+          this.lyricObj.stop();
+          this.$refs.lyricList.scroll.scrollTo(0, 0, 1000);
+        }
+        this.getData(val);
+      } else {
+        this.listShow = false;
+        this.songUrl = "";
         this.lyricObj.stop();
-        this.$refs.lyricList.scroll.scrollTo(0, 0, 1000);
-      }
-      if (oldval === val) {
-        return;
-      }
-      this.getData(val);
-    },
-    ifPlaying(val) {
-      if (this.$refs.rotateCD && this.CDshow) {
-        const rotateCD = this.$refs.rotateCD;
-        rotateCD.style.animationPlayState = val ? "running" : "paused";
+        this.lyricObj = null;
       }
     },
     currentTime(val) {
-      if (val <= this.firstTime && !this.hasUpTop) {
+      if (val <= this.firstTime && !this.hasUpTop && this.currentSong) {
         this.$refs.lyricList.scroll.scrollTo(0, 0, 1000);
       }
     }
@@ -527,8 +610,11 @@ export default {
           display flex
           justify-content space-around
           font-size 0.5rem
-          .likeIcon
+          .unlike
             font-size 0.55rem
+          .liked
+            font-size 0.55rem
+            color red
       .lyricPage
         color #bbb
         font-size 0.3rem
@@ -538,6 +624,7 @@ export default {
         .lyricWrapper
           width 100%
           .lyricLine
+            padding 0 0.3rem
             height 0.9rem
             line-height 0.9rem
             text-align center
@@ -594,7 +681,7 @@ export default {
         flex 1.5
         line-height 0.54rem
       .author-lyric
-        max-width 62%vw
+        max-width 62% vw
         overflow hidden
         white-space nowrap
         text-overflow ellipsis

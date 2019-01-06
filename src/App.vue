@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <keep-alive :exclude="['loadpage','songlist']">
+    <keep-alive :exclude="['loadpage','songlist','load']">
       <router-view />
     </keep-alive>
      <player></player> 
@@ -13,16 +13,6 @@ export default {
   name: "app",
   components: {
     Player
-  },
-  data() {
-    return {
-      loadShow: true
-    };
-  },
-  methods: {
-    showRouter() {
-      this.loadShow = false;
-    }
   }
 };
 </script>

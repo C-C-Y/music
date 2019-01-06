@@ -1,12 +1,12 @@
 <template>
-  <div v-if="profile && songList.playlist">
+  <div v-if="profile && songList">
     <card :initIndex="1"
           :tabArr="tabs" class="showCards" :secondMove="secondMove">
       <div class="music"
            slot="1">
         <p class="info border-bottom">歌单</p>
         <ul>
-          <li v-for="item of songList.playlist"
+          <li v-for="item of songList"
               :key=item.id
               class="list border-bottom" @click="enterSongList(item.id)">
             <img :src="item.coverImgUrl"
@@ -54,9 +54,9 @@ export default {
   },
   props: {
     songList: {
-      type: Object,
+      type: Array,
       default() {
-        return {};
+        return [];
       }
     },
     userInfo: {
