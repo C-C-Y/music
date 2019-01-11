@@ -1,10 +1,16 @@
 <template>
-  <div>menu</div>
+  <div>
+    <loading></loading>
+  </div>
 </template>
 
 <script>
+import loading from "base/loading.vue";
 export default {
-  name: "search"
+  name: "search",
+  components: {
+    loading
+  }
 };
 </script>
 

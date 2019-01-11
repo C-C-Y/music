@@ -158,7 +158,7 @@ export default {
         height .8rem
         font-size 0.35rem
         margin-left 0.15rem
-        caret-color red
+        -webkit-caret-color red
   .loadBtn
     margin-top 15%
     margin-left 50%

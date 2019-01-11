@@ -2,10 +2,13 @@ import { playMode } from "asset/js/config.js";
 let defaultUserid = null;
 let defaultPlayMode = playMode.sequence;
 let defaultInitPlay = false;
-
+let defaultFMstatus = 0;
 try {
   if (localStorage.playingList && localStorage.playingList.length) {
     defaultInitPlay = true;
+  }
+  if (localStorage.fm) {
+    defaultFMstatus = Number(localStorage.fm);
   }
   if (localStorage.userId) {
     defaultUserid = localStorage.userId;
@@ -30,5 +33,6 @@ export default {
   userId: defaultUserid,
   needFresh: false,
   initPlay: defaultInitPlay,
-  songNoChange: false
+  songNoChange: false,
+  fm: defaultFMstatus
 };

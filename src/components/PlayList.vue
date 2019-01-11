@@ -41,7 +41,7 @@
         <div class="content">
           <div class="songItem border-bottom"
                v-for="(item,index) of playingList"
-               :key="item.id" @click="playSong(index)" ref="listItem">
+               :key="key(item)" @click="playSong(index)" ref="listItem">
             <div class="itemLeft" :class="{'playing':ifPlay(index)}">
               <svg class="icon"
                    aria-hidden="true"
@@ -78,7 +78,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(["playingList", "Mode", "currentIndex"]),
+    ...mapGetters(["playingList", "Mode", "currentIndex", "ifPlaying"]),
     modeName() {
       let modeName = "";
       switch (this.Mode) {
@@ -98,8 +98,18 @@ export default {
   methods: {
     ...mapMutations(["deleteSong", "setCurrentIndex", "setChangeStatus"]),
     ...mapActions(["closePlay"]),
+    key(song) {
+      return Number(song.id);
+    },
     playSong(index) {
-      this.setCurrentIndex(index);
+      if (this.currentIndex == index) {
+        this.close();
+        if (!this.ifPlaying) {
+          this.$emit("play");
+        }
+      } else {
+        this.setCurrentIndex(index);
+      }
     },
     changeMode() {
       this.$emit("changeMode");

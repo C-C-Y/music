@@ -53,9 +53,9 @@ export default {
   display flex
   align-items center
   justify-content space-between
-  height 1rem
+  height .9rem
   background-color #333
-  font-size 0.55rem
+  font-size 0.5rem
   color  #fff
   .menu
     flex 1

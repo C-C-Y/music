@@ -4,7 +4,6 @@ import Home from "../views/home/Home.vue";
 import Recommend from "../views/recommend/Recommend.vue";
 import News from "../views/news/News.vue";
 import Radio from "../views/radio/Radio.vue";
-import Personal from "../views/personal/Personal.vue";
 import MV from "../views/mv/MV.vue";
 import Load from "../views/load/Load.vue";
 import Music from "../views/music/Music.vue";
@@ -40,7 +39,7 @@ const router = new Router({
         {
           path: "personal",
           name: "personal",
-          component: Personal
+          component: () => import("../views/personal/Personal.vue")
         },
         {
           path: "music",
@@ -73,6 +72,19 @@ const router = new Router({
       ]
     },
     {
+      path: "/latestsongs",
+      name: "latestsongs",
+      component: () => import("../views/latestsongs/LatestSongs.vue"),
+      redirect: { name: "areas", params: { areaId: 1 } },
+      children: [
+        {
+          path: "areas/:areaId",
+          name: "areas",
+          component: () => import("../views/areas/areas.vue")
+        }
+      ]
+    },
+    {
       path: "/personalpage/:userId",
       name: "person",
       component: () => import("../views/personalPage/PersonalPage.vue")
@@ -81,12 +93,37 @@ const router = new Router({
       path: "/songlist/:listId",
       name: "songlist",
       component: () => import("../views/songlist/SongList.vue")
-    }
-    /* {
+    },
+    {
+      path: "/album/:albumId",
+      name: "album",
+      component: () => import("../components/album.vue")
+    },
+    {
+      path: "/ranklist",
+      name: "ranklist",
+      component: () => import("../views/ranklist/RankList.vue")
+    },
+    {
+      path: "/dailysong",
+      name: "dailysong",
+      component: () => import("../views/dailySong/DailySong.vue")
+    },
+    {
+      path: "/superblist",
+      name: "superblist",
+      component: () => import("../views/superblist/SuperbList.vue")
+    },
+    {
+      path: "/newestdisc",
+      name: "newestdisc",
+      component: () => import("../views/newestdisc/NewestDisc.vue")
+    },
+    {
       path: "/search",
       name: "search",
-      component: () => import("../base/test.vue")
-    } */
+      component: () => import("../views/search/Search.vue")
+    }
     /*
     
     {

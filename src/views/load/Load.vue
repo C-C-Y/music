@@ -36,8 +36,9 @@ export default {
     ...mapGetters(["needFresh"])
   },
   mounted() {
+    let timeStamps = new Date().getTime();
     this.$nextTick(() => {
-      let url = `${api.url}/login/status`;
+      let url = `${api.url}/login/status?timestamp=${timeStamps}`;
       this.$axios
         .get(url, {
           withCredentials: true
@@ -58,10 +59,10 @@ export default {
     if (this.needFresh) {
       window.location.reload();
     }
-    /* let url = `${api.url}//logout`;
+    /* let url = `${api.url}/logout`;
     this.$axios.get(url, {
       withCredentials: true
-    });*/
+    }); */
   }
 };
 </script>

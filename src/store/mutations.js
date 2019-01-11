@@ -46,10 +46,25 @@ export default {
   },
   clearPlayList(state) {
     state.playingList = [];
+    try {
+      localStorage.playingList = [];
+    } catch (error) {
+      console.log(error);
+    }
   },
   addSong(state, item) {
     state.initPlay = false;
     state.playingList.splice(state.currentIndex + 1, 0, item);
+    try {
+      let list = [];
+      if (localStorage.playingList) {
+        list = JSON.parse(localStorage.playingList);
+      }
+      list.splice(state.currentIndex + 1, 0, item);
+      localStorage.playingList = JSON.stringify(list);
+    } catch (error) {
+      console.log(error);
+    }
   },
   deleteSong(state, index) {
     state.playingList.splice(index, 1);
@@ -93,7 +108,15 @@ export default {
   initplayer(state) {
     try {
       state.playingList = JSON.parse(localStorage.playingList);
-      state.currentIndex = localStorage.currentIndex;
+      state.currentIndex = Number(localStorage.currentIndex);
+    } catch (error) {
+      console.log(error);
+    }
+  },
+  setFmState(state, tag) {
+    state.fm = tag;
+    try {
+      localStorage.fm = tag;
     } catch (error) {
       console.log(error);
     }

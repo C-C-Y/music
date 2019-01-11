@@ -33,7 +33,8 @@
             <div class="baseWrapper">
             </div>
             <div class="outerWrapper"
-                 ref="rotateCD" :style="{animationPlayState:ifRotate}">
+                 ref="rotateCD"
+                 :style="{animationPlayState:ifRotate}">
               <img :src="album.picUrl"
                    alt=""
                    class="cd">
@@ -67,9 +68,10 @@
                   :data="lyricObj&&lyricObj.lines"
                   :bounce="false"
                   ref="lyricList"
-                  v-if="lyricObj">
+                  v-if="lyricObj"
+                  @click.native="enterCD">
             <div class="lyricWrapper"
-                 @click="enterCD">
+                 @click.stop="enterCD">
               <p class="lyricLine"
                  :class="{'current':currentLineNum===index}"
                  v-for="(line, index) in lyricObj.lines"
@@ -77,6 +79,12 @@
                  ref="line">{{line.txt}}</p>
             </div>
           </scroll>
+          <div class="commonWrapper noLyric"
+               :class="{'base':CDshow,'outer':!CDshow}"
+               v-if="!lyricObj"
+               @click.stop="enterCD">
+            纯音乐无歌词
+          </div>
         </div>
         <div class="bottom">
           <div class="progressBar">
@@ -89,24 +97,28 @@
             <svg class="icon fade"
                  aria-hidden="true"
                  v-show="Mode==2"
+                 :class="{'ifShow':fm}"
                  @click="changeMode()">
               <use xlink:href="#icon-suijibofang"></use>
             </svg>
             <svg class="icon fade"
                  aria-hidden="true"
                  v-show="Mode==0"
+                 :class="{'ifShow':fm}"
                  @click="changeMode()">
               <use xlink:href="#icon-xunhuanbofang"></use>
             </svg>
             <svg class="icon fade"
                  aria-hidden="true"
                  v-show="Mode==1"
+                 :class="{'ifShow':fm}"
                  @click="changeMode()">
               <use xlink:href="#icon-danquxunhuan"></use>
             </svg>
             <svg class="icon"
                  aria-hidden="true"
-                 @click="previous">
+                 @click="!fm && previous()"
+                 :class="{'ifFade':fm}">
               <use xlink:href="#icon-48shangyishou"></use>
             </svg>
             <svg class="icon palyPause"
@@ -128,6 +140,7 @@
             </svg>
             <svg class="icon fade"
                  aria-hidden="true"
+                 :class="{'ifShow':fm}"
                  @click.stop="showList">
               <use xlink:href="#icon-liebiao"></use>
             </svg>
@@ -159,9 +172,22 @@
             <use xlink:href="#icon-iconstop"></use>
           </svg>
         </circle-progress>
+        <svg class="icon unlike"
+             aria-hidden="true"
+             v-show="fm&&!ifLiked"
+             @click.stop="likeOrdislike(true)">
+          <use xlink:href="#icon-xihuan1"></use>
+        </svg>
+        <svg class="icon liked"
+             aria-hidden="true"
+             v-show="fm&&ifLiked"
+             @click.stop="likeOrdislike(false)">
+          <use xlink:href="#icon-xihuan2"></use>
+        </svg>
         <svg class="icon fade miniMenu"
              aria-hidden="true"
-             @click.stop="showList">
+             @click.stop="showList"
+             v-if="!fm">
           <use xlink:href="#icon-liebiao"></use>
         </svg>
       </div>
@@ -173,7 +199,8 @@
     <play-list v-if="listShow"
                @closeList="closeList"
                @changeMode="changeMode"
-               :specialShow="listShow"></play-list>
+               :specialShow="listShow"
+               @play="play_pause"></play-list>
     <audio :src="songUrl"
            ref="audio"
            @canplay="play"
@@ -229,7 +256,8 @@ export default {
       "currentSong",
       "likedIdList",
       "initPlay",
-      "songNoChange"
+      "songNoChange",
+      "fm"
     ]),
     ifRotate() {
       return this.ifPlaying ? "running" : "paused";
@@ -251,19 +279,27 @@ export default {
       return this.pieceTime(this.songTime);
     },
     singerName() {
-      let namelist = [];
-      let singers = this.currentSong.ar || this.currentSong.artists;
-      singers.forEach(item => {
-        namelist.push(item.name);
-      });
-      let name = namelist.join("/");
-      return name;
+      if (this.currentSong) {
+        let namelist = [];
+        let singers = this.currentSong.ar || this.currentSong.artists;
+        singers.forEach(item => {
+          namelist.push(item.name);
+        });
+        let name = namelist.join("/");
+        return name;
+      } else {
+        return "";
+      }
     },
     album() {
-      let album = this.currentSong.al
-        ? this.currentSong.al
-        : this.currentSong.album;
-      return album;
+      if (this.currentSong) {
+        let album = this.currentSong.al
+          ? this.currentSong.al
+          : this.currentSong.album;
+        return album;
+      } else {
+        return "";
+      }
     },
     playPercent() {
       return this.currentTime / this.songTime;
@@ -384,7 +420,7 @@ export default {
       if (this.initPlay) {
         return;
       }
-      if (!this.$refs.audio.currentTime) {
+      if (!this.$refs.audio.currentTime && this.lyricObj) {
         this.lyricObj.play();
       }
       if (!this.ifPlaying) {
@@ -398,6 +434,9 @@ export default {
     open() {
       this.CDshow = true;
       this.setFullSCreen(true);
+      if (this.ifPlaying) {
+        this.$refs.rotateCD.style.animationPlayState = "running";
+      }
       setTimeout(() => {
         this.$refs.lyricList.scroll.refresh();
         let lineEl = this.$refs.line[this.currentLineNum - 5];
@@ -437,8 +476,8 @@ export default {
     },
     handleLyric({ lineNum, txt }) {
       this.currentLineNum = lineNum;
-      if (lineNum > 5) {
-        let lineEl = this.$refs.line[lineNum - 5];
+      if (lineNum > 4) {
+        let lineEl = this.$refs.line[lineNum - 4];
         this.$refs.lyricList.scroll.scrollToElement(lineEl, 1000);
         this.hasUpTop = false;
       } else if (this.$refs.lyricList) {
@@ -457,9 +496,15 @@ export default {
         .then(
           this.$axios.spread((urlData, lyricData) => {
             this.songUrl = urlData.data.data[0].url;
-            this.lyric = lyricData.data.lrc.lyric;
-            this.lyricObj = new Lyric(this.lyric, this.handleLyric);
-            this.firstTime = this.lyricObj.lines[0].time / 1000;
+            if (lyricData.data.lrc) {
+              this.lyric = lyricData.data.lrc.lyric;
+              this.lyricObj = new Lyric(this.lyric, this.handleLyric);
+              if (this.lyricObj.lines[0]) {
+                this.firstTime = this.lyricObj.lines[0].time / 1000;
+              }
+            } else {
+              this.lyricObj = null;
+            }
           })
         )
         .catch(err => {
@@ -484,17 +529,31 @@ export default {
           this.lyricObj.stop();
           this.$refs.lyricList.scroll.scrollTo(0, 0, 1000);
         }
+        this.lyric = "";
+        this.currentLyric = null;
         this.getData(val);
       } else {
         this.listShow = false;
         this.songUrl = "";
-        this.lyricObj.stop();
-        this.lyricObj = null;
+        if (this.lyricObj) {
+          this.lyricObj.stop();
+          this.lyricObj = null;
+        }
       }
     },
     currentTime(val) {
-      if (val <= this.firstTime && !this.hasUpTop && this.currentSong) {
+      if (
+        val <= this.firstTime &&
+        !this.hasUpTop &&
+        this.$refs.lyricList.scroll
+      ) {
         this.$refs.lyricList.scroll.scrollTo(0, 0, 1000);
+      }
+    },
+    ifPlaying(val) {
+      if (val && this.$refs.audio && this.lyricObj) {
+        this.$refs.audio.play();
+        this.lyricObj.togglePlay();
       }
     }
   }
@@ -510,7 +569,18 @@ export default {
 .like
   color red
 .fade
-  color #aaa
+  color #ccc
+.ifShow
+  visibility hidden
+.ifFade
+  color #777
+.unlike
+  margin-right 0.15rem
+  font-size 0.55rem
+.liked
+  margin-right 0.15rem
+  font-size 0.55rem
+  color red
 @keyframes CDrotate
   from
     transform rotate(0)
@@ -567,6 +637,11 @@ export default {
     .middle
       height 70%
       position relative
+      .noLyric
+        font-size 0.35rem
+        display flex
+        justify-content center
+        align-items center
       .commonWrapper
         position absolute
         width 100%
@@ -610,11 +685,6 @@ export default {
           display flex
           justify-content space-around
           font-size 0.5rem
-          .unlike
-            font-size 0.55rem
-          .liked
-            font-size 0.55rem
-            color red
       .lyricPage
         color #bbb
         font-size 0.3rem
@@ -624,8 +694,12 @@ export default {
         .lyricWrapper
           width 100%
           .lyricLine
+            overflow hidden
+            text-overflow ellipsis
+            display -webkit-box
+            -webkit-line-clamp 2
+            -webkit-box-orient vertical
             padding 0 0.3rem
-            height 0.9rem
             line-height 0.9rem
             text-align center
     .bottom
@@ -656,47 +730,45 @@ export default {
       .bottom
         transform translateY(100%)
   .miniPlayer
-    position absolute
+    position fixed
     bottom 0
     left 0
     right 0
-    height 1.25rem
+    height 1.15rem
     z-index 99
     background-color #292929
     display flex
     align-items center
     .miniAvatar
-      width 0.9rem
-      height 0.9rem
+      width 0.8rem
+      height 0.8rem
       border-radius 0.1rem
       margin-left 0.1rem
     .miniInfo
       display flex
-      height 0.9rem
+      height 0.8rem
       flex 1
       flex-direction column
       margin-left 0.15rem
-      font-size 0.35rem
+      font-size 0.3rem
       .miniSongName
-        flex 1.5
-        line-height 0.54rem
+        line-height 0.45rem
       .author-lyric
+        line-height 0.35rem
         max-width 62% vw
         overflow hidden
         white-space nowrap
         text-overflow ellipsis
-        flex 1
-        font-size 0.28rem
+        font-size 0.25rem
         color #999
     .miniPalyPause
       position absolute
       top 50%
       left 50%
       transform translate(-48%, -55%)
-      font-size 0.35rem
+      font-size 0.32rem
       color #eee
     .special
-      font-size 0.35rem
       transform translate(-40%, -57%)
     .miniMenu
       font-size 0.5rem

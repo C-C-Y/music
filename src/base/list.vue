@@ -18,14 +18,14 @@
                 @click="playThis(index)">
               <span class="songIndex"
                     v-if="!songImgShow">{{index+1}}</span>
-              <img :src="song.al.picUrl"
+              <img v-lazy="album(song).picUrl"
                    class="songImg"
                    v-if="songImgShow">
               <div class="songInfo"
                    :class="{'noCopyright':unablePlayIdList.includes(song.id)}">
                 <span class="songName">{{song.name}}</span>
                 <span class="authorAlbum"
-                      :class="{'noCopyright':unablePlayIdList.includes(song.id)}">{{song.ar[0].name+"-"+song.al.name}}</span>
+                      :class="{'noCopyright':unablePlayIdList.includes(song.id)}">{{singerName(song)+"-"+album(song).name}}</span>
               </div>
               <svg class="icon songOption"
                    aria-hidden="true"
@@ -96,6 +96,18 @@ export default {
     }
   },
   methods: {
+    singerName(song) {
+      let namelist = [];
+      let singers = song.ar || song.artists;
+      singers.forEach(item => {
+        namelist.push(item.name);
+      });
+      let name = namelist.join("/");
+      return name;
+    },
+    album(song) {
+      return song.al || song.album;
+    },
     scroll(pos) {
       this.$emit("scroll", pos);
     },
@@ -107,11 +119,13 @@ export default {
     }
   },
   mounted() {
-    this.$nextTick(() => {
-      let innerHeight = window.innerHeight * this.heightPercent;
-      let height = innerHeight;
-      this.$refs.listContent.style.minHeight = `${height}px`;
-    });
+    if (this.heightPercent) {
+      this.$nextTick(() => {
+        let innerHeight = window.innerHeight * this.heightPercent;
+        let height = innerHeight;
+        this.$refs.listContent.style.minHeight = `${height}px`;
+      });
+    }
   }
 };
 </script>
@@ -138,12 +152,17 @@ export default {
       text-align center
     .songImg
       height 80%
-      width 10%
+      width .88rem
+      margin 0 .2rem
     .songInfo
       display flex
       flex-direction column
       .songName
         font-size 0.32rem
+        overflow-x hidden
+        max-width 70% vw
+        white-space nowrap
+        text-overflow ellipsis
       .authorAlbum
         height 0.4rem
         line-height 0.4rem

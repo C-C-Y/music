@@ -1,44 +1,44 @@
 <template>
-  <div>
-    <div class="songListBox"
-         v-if="playlist && playlist.tracks">
-      <div class="backBox"
-           ref="backBox">
-      </div>
-      <svg class="icon backIcon"
-           aria-hidden="true"
-           @click="back()">
-        <use xlink:href="#icon-fanhui"></use>
-      </svg>
-      <span class="topListName"
-            v-show="topNameShow">{{playlist.name}}</span>
-      <span class="topListName"
-            v-show="!topNameShow">歌单</span>
-      <list :songlist="playlist.tracks"
-            :unablePlayIdList="unablePlayIdList"
-            :needListenScroll="true"
-            @scroll="scroll"
-            @showMenu="showOptionMenu"
-            @playThis="playThis"
-            :bounce="bounce"
-            class="wrapper"
-            :heightPercent="0.6">
-        <div slot="listTop"
-             class="listTop"
-             ref="listTop">
-          <div class="listBg"
-               :style="listOuterBG"></div>
-          <div class="firstlayer"
-               :style="listBg"></div>
-          <div class="listWrapper">
-            <img v-lazy="playlist.tracks[0].al.picUrl"
-                 class="leftPic">
-            <div class="rightInfo">
-              <span class="listName">{{playlist.name}}</span>
-              <div class="creator">
-                <img v-lazy="playlist.creator.avatarUrl"
+<div>
+  <div class="songListBox"
+       v-if="playlist && playlist.songs">
+    <div class="backBox"
+         ref="backBox">
+    </div>
+    <svg class="icon backIcon"
+         aria-hidden="true"
+         @click="back()">
+      <use xlink:href="#icon-fanhui"></use>
+    </svg>
+    <span class="topListName"
+          v-show="topNameShow">{{playlist.name}}</span>
+    <span class="topListName"
+          v-show="!topNameShow">专辑</span>
+    <list :songlist="playlist.songs"
+          :unablePlayIdList="unablePlayIdList"
+          :needListenScroll="true"
+          @scroll="scroll"
+          @showMenu="showOptionMenu"
+          @playThis="playThis"
+          :bounce="bounce"
+          class="wrapper"
+          :heightPercent="0.6">
+      <div slot="listTop"
+           class="listTop"
+           ref="listTop">
+        <div class="listBg"
+             :style="listOuterBG"></div>
+        <div class="firstlayer"
+             :style="listBg"></div>
+        <div class="listWrapper">
+          <img v-lazy="playlist.album.picUrl"
+               class="leftPic">
+          <div class="rightInfo">
+            <span class="listName">{{playlist.album.name}}</span>
+            <div class="creator">
+                <img v-lazy="playlist.album.artist.picUrl"
                      class="avatar">
-                <span class="nickName">{{playlist.creator.nickname}}</span>
+                <span class="nickName">{{singerName(playlist.album)}}</span>
                 <svg class="icon enter"
                      aria-hidden="true">
                   <use xlink:href="#icon-youjiantou"></use>
@@ -51,73 +51,72 @@
                 </svg>
                 <span class="commentText">评论</span>
               </div>
-            </div>
           </div>
         </div>
-        <div slot="listHeader"
-             class="listHeader">
-          <div class="playAllSong"
-               @click.stop="playAll()">
-            <svg class="icon playIcon"
-                 aria-hidden="true">
-              <use xlink:href="#icon-bofang1"></use>
-            </svg>
-            <span class="playAll">播放全部</span>
-            <span class="count">{{"(共"+playlist.trackCount+"首)"}}</span>
-          </div>
-        </div>
-      </list>
-      <transition name="option">
-        <div class="OptionDetail"
-             v-if="optionShow">
-          <div class="optionTop"
-               @click="closeOption()"></div>
-
-          <div class="optionContent">
-            <ul>
-              <li class="optionSongName border-bottom">
-                <span>{{"歌曲:"+ " " +optionObj.name}}</span>
-              </li>
-              <li class="optionItem border-bottom">
-                <svg class="icon optionIcon"
-                     aria-hidden="true">
-                  <use xlink:href="#icon-shoucang2"></use>
-                </svg>
-                <span>收藏到歌单</span>
-              </li>
-              <li class="optionItem border-bottom">
-                <svg class="icon optionIcon"
-                     aria-hidden="true">
-                  <use xlink:href="#icon-weibiaoti-"></use>
-                </svg>
-                <span>评论</span>
-              </li>
-              <li class="optionItem border-bottom">
-                <svg class="icon optionIcon"
-                     aria-hidden="true">
-                  <use xlink:href="#icon-geshou"></use>
-                </svg>
-                <span class="album">{{"歌手: "+ singerName}}</span>
-              </li>
-              <li v-if="albumOption"
-                  class="optionItem border-bottom">
-                <svg class="icon optionIcon"
-                     aria-hidden="true">
-                  <use xlink:href="#icon-zhuanjiguangpan"></use>
-                </svg>
-                <span class="album">{{"专辑: "+ optionObj.al.name}}</span>
-              </li>
-            </ul>
-          </div>
-        </div>
-      </transition>
-      <div class="noCopyright"
-           v-if="noPlay"
-           @touchstart="hiddenAlert">
-        <span class="alertText">很抱歉,这首歌暂无版权</span>
       </div>
+      <div slot="listHeader"
+           class="listHeader">
+        <div class="playAllSong" @click.stop="playAll()">
+          <svg class="icon playIcon"
+               aria-hidden="true">
+            <use xlink:href="#icon-bofang1"></use>
+          </svg>
+          <span class="playAll">播放全部</span>
+          <span class="count">{{"(共"+playlist.songs.length+"首)"}}</span>
+        </div>
+      </div>
+    </list>
+    <transition name="option">
+      <div class="OptionDetail"
+           v-if="optionShow">
+        <div class="optionTop"
+             @click="closeOption()"></div>
+
+        <div class="optionContent">
+          <ul>
+            <li class="optionSongName border-bottom">
+              <span>{{"歌曲:"+ " " +optionObj.name}}</span>
+            </li>
+            <li class="optionItem border-bottom">
+              <svg class="icon optionIcon"
+                   aria-hidden="true">
+                <use xlink:href="#icon-shoucang2"></use>
+              </svg>
+              <span>收藏到歌单</span>
+            </li>
+            <li class="optionItem border-bottom">
+              <svg class="icon optionIcon"
+                   aria-hidden="true">
+                <use xlink:href="#icon-weibiaoti-"></use>
+              </svg>
+              <span>评论</span>
+            </li>
+            <li class="optionItem border-bottom">
+              <svg class="icon optionIcon"
+                   aria-hidden="true">
+                <use xlink:href="#icon-geshou"></use>
+              </svg>
+              <span class="album">{{"歌手: "+ singerName(optionObj)}}</span>
+            </li>
+            <li v-if="albumOption"
+                class="optionItem border-bottom">
+              <svg class="icon optionIcon"
+                   aria-hidden="true">
+                <use xlink:href="#icon-zhuanjiguangpan"></use>
+              </svg>
+              <span class="album">{{"专辑: "+ optionObj.al.name}}</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </transition>
+    <div class="noCopyright"
+         v-if="noPlay"
+         @touchstart="hiddenAlert">
+      <span class="alertText">很抱歉,这首歌暂无版权</span>
     </div>
-    <loading v-else
+  </div>
+  <loading v-else
              class="fullLoading"></loading>
   </div>
 </template>
@@ -128,17 +127,13 @@ import list from "base/list.vue";
 import api from "@/api/api";
 import loading from "base/loading.vue";
 export default {
-  name: "songlist",
-  components: {
-    loading,
-    list
-  },
+  name: "album",
   data() {
     return {
       playlist: {},
       optionObj: {},
       optionShow: false,
-      albumOption: true,
+      albumOption: false,
       bounce: false,
       topNameShow: false,
       noPlay: false,
@@ -147,18 +142,13 @@ export default {
       songPlayList: []
     };
   },
+  components: {
+    loading,
+    list
+  },
   computed: {
-    singerName() {
-      let namelist = [];
-      let singers = this.optionObj.ar || this.optionObj.artists;
-      singers.forEach(item => {
-        namelist.push(item.name);
-      });
-      let name = namelist.join("/");
-      return name;
-    },
     listBg() {
-      let bg = `url('${this.playlist.tracks[0].al.picUrl}')`;
+      let bg = `url('${this.playlist.album.picUrl}')`;
       return {
         backgroundImage: bg,
         backgroundPosition: "center",
@@ -167,7 +157,7 @@ export default {
       };
     },
     listOuterBG() {
-      let bg = `url('${this.playlist.tracks[0].al.picUrl}')`;
+      let bg = `url('${this.playlist.album.picUrl}')`;
       return {
         backgroundImage: bg,
         backgroundPosition: "center",
@@ -177,19 +167,28 @@ export default {
     }
   },
   methods: {
+    singerName(item) {
+      let namelist = [];
+      let singers = item.ar || item.artists;
+      singers.forEach(item => {
+        namelist.push(item.name);
+      });
+      let name = namelist.join("/");
+      return name;
+    },
     ...mapActions(["selectPlay"]),
     playAll() {
       this.selectPlay({ list: this.songPlayList, index: 0 });
     },
-    checkPlay(idList, songlist) {
+    checkPlay(list) {
       let unablePlayList = [];
       let canplayIdList = [];
       let songPlayList = [];
-      idList.forEach((item, index) => {
-        if (item.subp == 0) {
+      list.forEach((item, index) => {
+        if (item.privilege.subp == 0) {
           unablePlayList.push(item.id);
         } else {
-          songPlayList.push(songlist[index]);
+          songPlayList.push(list[index]);
           canplayIdList.push(item.id);
         }
       });
@@ -204,7 +203,7 @@ export default {
       this.$router.go(-1);
     },
     playThis(index) {
-      let id = this.playlist.tracks[index].id;
+      let id = this.playlist.songs[index].id;
       if (this.unablePlayIdList.includes(id)) {
         this.noPlay = true;
       } else {
@@ -229,7 +228,7 @@ export default {
     },
     showOptionMenu(index) {
       this.optionShow = true;
-      this.optionObj = this.playlist.tracks[index];
+      this.optionObj = this.playlist.songs[index];
     },
     closeOption() {
       this.optionShow = false;
@@ -238,14 +237,14 @@ export default {
   },
   created() {
     let url = api.url;
-    let listId = this.$route.params.listId;
+    let albumId = this.$route.params.albumId;
     this.$axios
-      .get(`${url}/playlist/detail?id=${listId}`, {
+      .get(`${url}/album?id=${albumId}`, {
         withCredentials: true
       })
       .then(result => {
-        this.playlist = result.data.playlist;
-        this.checkPlay(result.data.privileges, result.data.playlist.tracks);
+        this.playlist = result.data;
+        this.checkPlay(result.data.songs);
       })
       .catch(err => {
         console.log(err);
@@ -269,7 +268,7 @@ export default {
   position absolute 
   top 50%
   left 50%
-  transform translate(-50%,-50%)      
+  transform translate(-50%,-50%)  
 .backBox
   position relative
   z-index 30
@@ -383,10 +382,10 @@ export default {
             border-radius 0.3rem
             margin-right 0.1rem
           .nickName
-            font-size 0.23rem
+            font-size .23rem
             margin-right 0.2rem
           .enter
-            font-size 0.35rem
+            font-size .35rem  
   .listHeader
     height 0.8rem
     background-color #333
@@ -405,7 +404,7 @@ export default {
         color #999
 .OptionDetail
   position fixed
-  top 0.9rem
+  top .9rem
   left 0
   right 0
   bottom 0

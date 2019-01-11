@@ -93,9 +93,7 @@ export default {
           } catch (error) {
             console.log(error);
           }
-          setTimeout(() => {
-            this.$router.push({ name: "load" });
-          }, 1000);
+          this.$router.push("/");
         })
         .catch(err => {
           console.log(err);

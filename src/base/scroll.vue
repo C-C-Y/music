@@ -25,6 +25,14 @@ export default {
       type: Boolean,
       default: false
     },
+    pullUpLoad: {
+      type: [Boolean, Object],
+      default: false
+    },
+    hasGotData: {
+      type: Boolean,
+      default: false
+    },
     bounce: {
       type: [Object, Boolean],
       default() {
@@ -40,12 +48,19 @@ export default {
         this.scroll = new BScroll(this.$refs.wrapper, {
           probeType: this.probeType,
           click: this.click,
-          bounce: this.bounce
+          bounce: this.bounce,
+          pullUpLoad: this.pullUpLoad
         });
         if (this.listenScroll) {
           let me = this;
           this.scroll.on("scroll", pos => {
             me.$emit("scroll", pos);
+          });
+        }
+        if (this.pullUpLoad) {
+          let me = this;
+          this.scroll.on("pullingUp", () => {
+            me.$emit("pullingUp");
           });
         }
       }
@@ -64,6 +79,9 @@ export default {
       setTimeout(() => {
         this.refresh();
       }, 20);
+    },
+    hasGotData() {
+      this.scroll.finishPullUp();
     }
   }
 };

@@ -76,9 +76,8 @@ export default {
 
 <style lang="stylus" scoped>
 .home 
-  margin-top .95rem 
-  padding-top .3rem
+  margin-top .88rem 
   background-color #333
   color #fff
-  font-size .35rem
+  font-size .31rem
 </style>
