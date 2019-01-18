@@ -22,8 +22,6 @@
       </div>
       <div class="activity"
            slot="2">
-        <span class="myWord">作者及其朋友都未发过动态,不知道动态如何展示...</span>
-        <span class="myWord">如果可以请加我好友"山楂心",向我展示你的动态!</span>
         <span class="myWord">后续可能会补上此功能</span>
       </div>
       <div class="userInfo"
@@ -40,13 +38,13 @@
 </template>
 
 <script>
+import { mapGetters } from "vuex";
 import Card from "base/card.vue";
 export default {
   name: "PersonalDetail",
   data() {
     return {
-      profile: this.userInfo.profile,
-      tabs: ["音乐", "动态", "关于我"]
+      profile: this.userInfo.profile
     };
   },
   components: {
@@ -65,12 +63,26 @@ export default {
         return {};
       }
     },
+    id: {
+      type: [String, Number],
+      default: null
+    },
     secondMove: {
       type: [String, Number],
       default: 0
     }
   },
   computed: {
+    ...mapGetters(["userId"]),
+    tabs() {
+      let tabs = [];
+      if (this.userId == this.id) {
+        tabs = ["音乐", "动态", "关于我"];
+      } else {
+        tabs = ["音乐", "动态", "关于TA"];
+      }
+      return tabs;
+    },
     level() {
       let level = "";
       if (this.userInfo.level) {

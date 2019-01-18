@@ -4,7 +4,8 @@
       <span v-for="(tab,index) in tabArr"
             :key="index"
             @click="showCard(index+1)"
-            class="tab">{{tab}}</span>
+            :class="{'active':actualShow==index+1}"
+            >{{tab}}</span>
     </div>
     <div class="content">
       <div v-for="index in tabArr.length"
@@ -57,6 +58,7 @@ export default {
       } else {
         this.actualShow = index;
       }
+      this.$emit("seclect", index - 1);
     },
     ifShow(index) {
       return this.actualShow === index;
@@ -64,11 +66,11 @@ export default {
   },
   watch: {
     secondMove(val) {
+      const clientWidth = window.innerWidth;
       if (val == 0) {
         this.$refs.tab.style["transform"] = "translateY(0)";
         this.$refs.tab.style["webkitTransform"] = "translateY(0)";
       } else {
-        let clientWidth = window.innerWidth;
         let offsetY =
           -val - (this.topPercent * clientWidth - this.topHeight) - 3;
         this.$refs.tab.style["transform"] = `translateY(${offsetY}px)`;
@@ -84,11 +86,14 @@ export default {
   position relative
   display flex
   justify-content space-around
-  height .8rem
-  line-height .8rem
+  height .9rem
+  align-items center
   background-color #333
-  font-size 0.35rem
+  font-size 0.32rem
   color #ccc
   border-radius .3rem .3rem 0 0 
+  margin-bottom -.02rem
   z-index 10
+  .active
+    color red
 </style>

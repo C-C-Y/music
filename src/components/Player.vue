@@ -68,13 +68,13 @@
                   :data="lyricObj&&lyricObj.lines"
                   :bounce="false"
                   ref="lyricList"
-                  v-if="lyricObj"
+                  v-show="lyricObj"
                   @click.native="enterCD">
             <div class="lyricWrapper"
                  @click.stop="enterCD">
               <p class="lyricLine"
                  :class="{'current':currentLineNum===index}"
-                 v-for="(line, index) in lyricObj.lines"
+                 v-for="(line, index) in (lyricObj&&lyricObj.lines)"
                  :key="line.time"
                  ref="line">{{line.txt}}</p>
             </div>
@@ -432,16 +432,7 @@ export default {
       this.setFullSCreen(false);
     },
     open() {
-      this.CDshow = true;
       this.setFullSCreen(true);
-      if (this.ifPlaying) {
-        this.$refs.rotateCD.style.animationPlayState = "running";
-      }
-      setTimeout(() => {
-        this.$refs.lyricList.scroll.refresh();
-        let lineEl = this.$refs.line[this.currentLineNum - 5];
-        this.$refs.lyricList.scroll.scrollToElement(lineEl, 100);
-      }, 20);
     },
     play_pause() {
       if (this.initPlay) {
@@ -555,6 +546,20 @@ export default {
         this.$refs.audio.play();
         this.lyricObj.togglePlay();
       }
+    },
+    fullScreen(val) {
+      let wrapper = this.$refs.lyricList;
+      if (val && wrapper && wrapper.scroll) {
+        this.CDshow = true;
+        if (this.ifPlaying) {
+          this.$refs.rotateCD.style.animationPlayState = "running";
+        }
+        setTimeout(() => {
+          this.$refs.lyricList.scroll.refresh();
+          let lineEl = this.$refs.line[this.currentLineNum - 5];
+          this.$refs.lyricList.scroll.scrollToElement(lineEl, 100);
+        }, 20);
+      }
     }
   }
 };
@@ -600,7 +605,7 @@ export default {
     bottom 0
     left 0
     right 0
-    z-index 100
+    z-index 400
     background-color #191919
     display flex
     flex-direction column

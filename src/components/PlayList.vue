@@ -41,7 +41,7 @@
         <div class="content">
           <div class="songItem border-bottom"
                v-for="(item,index) of playingList"
-               :key="key(item)" @click="playSong(index)" ref="listItem">
+               :key="item.id" @click.stop="playSong(index)" ref="listItem">
             <div class="itemLeft" :class="{'playing':ifPlay(index)}">
               <svg class="icon"
                    aria-hidden="true"
@@ -98,9 +98,6 @@ export default {
   methods: {
     ...mapMutations(["deleteSong", "setCurrentIndex", "setChangeStatus"]),
     ...mapActions(["closePlay"]),
-    key(song) {
-      return Number(song.id);
-    },
     playSong(index) {
       if (this.currentIndex == index) {
         this.close();
@@ -123,6 +120,7 @@ export default {
           this.closePlay();
         }
       } else if (index < this.currentIndex) {
+        console.log("ssss");
         this.setChangeStatus(true);
         this.setCurrentIndex(this.currentIndex - 1);
         this.deleteSong(index);
@@ -175,7 +173,7 @@ export default {
   left 0
   right 0
   bottom 0
-  z-index 100
+  z-index 421
   overflow hidden
   .filter
     position relative

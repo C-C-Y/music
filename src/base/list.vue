@@ -152,8 +152,8 @@ export default {
       text-align center
     .songImg
       height 80%
-      width .88rem
-      margin 0 .2rem
+      width 0.88rem
+      margin 0 0.2rem
     .songInfo
       display flex
       flex-direction column

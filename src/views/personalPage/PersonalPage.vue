@@ -29,11 +29,11 @@
             @scroll="scroll"
             :listenScroll="listenScroll"
             :probeType="probeType"
-            :canScroll="canScroll"
             :bounce="bounce">
       <person-detail :songList="songlist"
                      :userInfo="personalInfo"
-                     :secondMove="secondMove"></person-detail>
+                     :secondMove="secondMove"
+                     :id="id"></person-detail>
     </scroll>
   </div>
 </template>
@@ -52,7 +52,6 @@ export default {
       personalInfo: {},
       songlist: [],
       scrollY: 0,
-      canScroll: true,
       secondMove: 0,
       bounce: {
         top: true,
@@ -60,7 +59,8 @@ export default {
         right: true,
         bottom: false
       },
-      topNickname: false
+      topNickname: false,
+      id: 0
     };
   },
   components: {
@@ -122,12 +122,8 @@ export default {
     this.probeType = 3;
     this.listenScroll = true;
     let id = this.$route.params.userId;
-    if (id === this.userId && this.userSongList.length) {
-      this.personalInfo = this.userInfo;
-      this.songlist = this.userSongList;
-    } else {
-      this.getData(id);
-    }
+    this.id = id;
+    this.getData(id);
   },
   watch: {
     scrollY(newval) {
@@ -149,7 +145,6 @@ export default {
       } else if (newval < 0 && cardTop + newval > 50) {
         this.secondMove = 0;
         this.topNickname = false;
-        this.canScroll = true;
         this.$refs.bg.style.zIndex = 0;
         this.$refs.bg.style.paddingBottom = `${bgPaddingBottom}px`;
         this.$refs.bg.style.height = 0;
@@ -161,7 +156,6 @@ export default {
       } else {
         this.secondMove = 0;
         this.topNickname = false;
-        this.canScroll = true;
         this.$refs.userInfo.style[transform] = `translateY(${newval}px)`;
       }
     }

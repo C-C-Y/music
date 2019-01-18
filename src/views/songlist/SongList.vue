@@ -85,20 +85,24 @@
                 </svg>
                 <span>收藏到歌单</span>
               </li>
-              <li class="optionItem border-bottom">
+              <router-link class="optionItem border-bottom"
+                           tag="li"
+                           :to="{name:'songcomment',params:{
+                songId:optionObj.id,song:{pic:optionObj.al.picUrl,name:optionObj.name,singer:singerName}
+              }}">
                 <svg class="icon optionIcon"
                      aria-hidden="true">
                   <use xlink:href="#icon-weibiaoti-"></use>
                 </svg>
                 <span>评论</span>
-              </li>
-              <li class="optionItem border-bottom">
+              </router-link>
+              <router-link class="optionItem border-bottom" tag="li" :to="{name:'singerpage',params:{singerId:optionObj.ar[0].id}}">
                 <svg class="icon optionIcon"
                      aria-hidden="true">
                   <use xlink:href="#icon-geshou"></use>
                 </svg>
                 <span class="album">{{"歌手: "+ singerName}}</span>
-              </li>
+              </router-link>
               <li v-if="albumOption"
                   class="optionItem border-bottom">
                 <svg class="icon optionIcon"
@@ -209,7 +213,10 @@ export default {
         this.noPlay = true;
       } else {
         let songIndex = this.canplayIdList.indexOf(id);
-        this.selectPlay({ list: this.songPlayList, index: songIndex });
+        this.selectPlay({
+          list: [...this.songPlayList],
+          index: songIndex
+        });
       }
     },
     scroll(pos) {
@@ -266,10 +273,10 @@ export default {
   &:before
     border-color #444
 .fullLoading
-  position absolute 
+  position absolute
   top 50%
   left 50%
-  transform translate(-50%,-50%)      
+  transform translate(-50%, -50%)
 .backBox
   position relative
   z-index 30

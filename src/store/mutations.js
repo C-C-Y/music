@@ -44,10 +44,13 @@ export default {
       console.log(error);
     }
   },
+
   clearPlayList(state) {
     state.playingList = [];
+    state.playListId = 0;
     try {
       localStorage.playingList = [];
+      localStorage.playListId = 0;
     } catch (error) {
       console.log(error);
     }

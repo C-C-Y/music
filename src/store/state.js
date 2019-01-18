@@ -11,7 +11,7 @@ try {
     defaultFMstatus = Number(localStorage.fm);
   }
   if (localStorage.userId) {
-    defaultUserid = localStorage.userId;
+    defaultUserid = Number(localStorage.userId);
   }
   if (localStorage.playMode) {
     defaultPlayMode = Number(localStorage.playMode);

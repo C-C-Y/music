@@ -123,6 +123,16 @@ const router = new Router({
       path: "/search",
       name: "search",
       component: () => import("../views/search/Search.vue")
+    },
+    {
+      path: "/songcomment/:songId",
+      name: "songcomment",
+      component: () => import("../views/songcomment/SongComment.vue")
+    },
+    {
+      path: "/singerpage/:singerId",
+      name: "singerpage",
+      component: () => import("../views/singerPage/SingerPage.vue")
     }
     /*
     

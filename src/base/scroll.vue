@@ -21,6 +21,14 @@ export default {
       type: Boolean,
       default: true
     },
+    canScroll: {
+      type: Boolean,
+      default: true
+    },
+    momentum: {
+      type: Boolean,
+      default: true
+    },
     listenScroll: {
       type: Boolean,
       default: false
@@ -30,6 +38,10 @@ export default {
       default: false
     },
     hasGotData: {
+      type: Boolean,
+      default: false
+    },
+    stopPropagation: {
       type: Boolean,
       default: false
     },
@@ -49,8 +61,13 @@ export default {
           probeType: this.probeType,
           click: this.click,
           bounce: this.bounce,
-          pullUpLoad: this.pullUpLoad
+          pullUpLoad: this.pullUpLoad,
+          momentum: this.momentum,
+          stopPropagation: this.stopPropagation
         });
+        if (!this.canScroll) {
+          this.scroll.disable();
+        }
         if (this.listenScroll) {
           let me = this;
           this.scroll.on("scroll", pos => {
@@ -82,6 +99,9 @@ export default {
     },
     hasGotData() {
       this.scroll.finishPullUp();
+    },
+    canScroll(val) {
+      val ? this.scroll.enable() : this.scroll.disable();
     }
   }
 };
