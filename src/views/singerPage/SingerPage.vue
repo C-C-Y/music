@@ -30,15 +30,22 @@
         <div>
           <div class="filter"
                ref="filter">
-            <div class="enterPerson" ref="person" @click.stop="enterPerson" v-if="singerInfo.accountId">个人主页</div>
+            <div class="enterPerson"
+                 ref="person"
+                 @click.stop="enterPerson"
+                 v-if="singerInfo.accountId">个人主页</div>
             <div class="tab">
-              <span class="tabItem" :class="{'active':cardIndex==0}"
+              <span class="tabItem"
+                    :class="{'active':cardIndex==0}"
                     @click="seclect(0)">热门单曲</span>
-              <span class="tabItem" :class="{'active':cardIndex==1}"
+              <span class="tabItem"
+                    :class="{'active':cardIndex==1}"
                     @click="seclect(1)">专辑</span>
-              <span class="tabItem" :class="{'active':cardIndex==2}"
+              <span class="tabItem"
+                    :class="{'active':cardIndex==2}"
                     @click="seclect(2)">视频</span>
-              <span class="tabItem" :class="{'active':cardIndex==3}"
+              <span class="tabItem"
+                    :class="{'active':cardIndex==3}"
                     @click="seclect(3)">艺人信息</span>
             </div>
           </div>
@@ -48,13 +55,65 @@
                          :singerInfo="singerInfo.briefDesc"
                          :singerId="singerId"
                          :innerCanScroll="innerCanScroll"
-                         @innerScroll="innerScroll" ref="inner"
-                         :cardIndex="cardIndex"></singer-detail>
+                         @innerScroll="innerScroll"
+                         ref="inner"
+                         :cardIndex="cardIndex"
+                         @showMenu="showMenu"></singer-detail>
         </div>
       </scroll>
     </div>
     <loading v-else
              class="fullLoading"></loading>
+    <transition name="option">
+      <div class="OptionDetail"
+           v-if="optionShow">
+        <div class="optionTop"
+             @click="closeOption()"></div>
+
+        <div class="optionContent">
+          <ul>
+            <li class="optionSongName border-bottom">
+              <span>{{"歌曲:"+ " " +optionObj.name}}</span>
+            </li>
+            <li class="optionItem border-bottom">
+              <svg class="icon optionIcon"
+                   aria-hidden="true">
+                <use xlink:href="#icon-shoucang2"></use>
+              </svg>
+              <span>收藏到歌单</span>
+            </li>
+            <router-link class="optionItem border-bottom"
+                         tag="li"
+                         :to="{name:'songcomment',params:{
+                songId:optionObj.id,song:{pic:optionObj.al.picUrl,name:optionObj.name,singer:singerName}
+              }}">
+              <svg class="icon optionIcon"
+                   aria-hidden="true">
+                <use xlink:href="#icon-weibiaoti-"></use>
+              </svg>
+              <span>评论</span>
+            </router-link>
+            <router-link class="optionItem border-bottom"
+                         tag="li"
+                         :to="{name:'singerpage',params:{singerId:optionObj.ar[0].id}}" v-if="ifSingerPage">
+              <svg class="icon optionIcon"
+                   aria-hidden="true">
+                <use xlink:href="#icon-geshou"></use>
+              </svg>
+              <span class="album">{{"歌手: "+ singerName}}</span>
+            </router-link>
+            <li v-if="albumOption"
+                class="optionItem border-bottom">
+              <svg class="icon optionIcon"
+                   aria-hidden="true">
+                <use xlink:href="#icon-zhuanjiguangpan"></use>
+              </svg>
+              <span class="album">{{"专辑: "+ optionObj.al.name}}</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </transition>
   </div>
 </template>
 <script>
@@ -78,7 +137,9 @@ export default {
       cardIndex: 0,
       innerScrollY: 0,
       innerCanScroll: false,
-      outerCanScroll: true
+      outerCanScroll: true,
+      optionObj: {},
+      optionShow: false
     };
   },
   components: {
@@ -87,6 +148,18 @@ export default {
     SingerDetail
   },
   computed: {
+    singerName() {
+      let namelist = [];
+      let singers = this.optionObj.ar || this.optionObj.artists;
+      singers.forEach(item => {
+        namelist.push(item.name);
+      });
+      let name = namelist.join("/");
+      return name;
+    },
+    ifSingerPage() {
+      return this.$route.name != "singerpage";
+    },
     singerId() {
       return this.$route.params.singerId;
     },
@@ -102,6 +175,12 @@ export default {
     }
   },
   methods: {
+    showMenu(index) {
+      this.optionObj = this.hotSongs[index];
+    },
+    closeOption() {
+      this.optionShow = false;
+    },
     enterPerson() {
       let userId = this.singerInfo.accountId;
       this.$router.push({ name: "person", params: { userId } });
@@ -175,7 +254,9 @@ export default {
       } else if (newval < 0 && cardTop + newval > topHeight) {
         this.$refs.bg.style.zIndex = 3;
         this.$refs.img.style[filter] = `brightness(${brightNess}%)`;
-        this.$refs.person.style.opacity = opacity;
+        if (this.$refs.person) {
+          this.$refs.person.style.opacity = opacity;
+        }
         this.$refs.img.style[transform] = `scale(${scale})`;
         this.$refs.bg.style[transform] = `translateY(${val}px)`;
         /* this.$refs.userInfo.style.opacity = opacity; */
@@ -203,7 +284,7 @@ export default {
   left 50%
   transform translate(-50%, -50%)
 .active
-  color red  
+  color red
 .singerPage
   background-color #111
   .head
@@ -251,14 +332,14 @@ export default {
         left 0
         right 0
         height 6.5vh
-        margin-bottom -.02rem
+        margin-bottom -0.02rem
         display flex
         justify-content space-around
         align-items center
         background-color #222
         font-size 0.32rem
         color #ccc
-        border-radius .3rem .3rem 0 0 
+        border-radius 0.3rem 0.3rem 0 0
       .enterPerson
         position absolute
         bottom 1.3rem
@@ -272,4 +353,51 @@ export default {
         background-color #222
         opacity 0.65
         color #fff
+.OptionDetail
+  position fixed
+  top 0.9rem
+  left 0
+  right 0
+  bottom 0
+  display flex
+  flex-direction column
+  z-index 200
+  .optionTop
+    width 100%
+    flex 1
+  .optionContent
+    width 100%
+    background-color #333
+    .optionSongName
+      height 0.8rem
+      line-height 0.8rem
+      font-size 0.32rem
+      color #ccc
+      margin-left 0.2rem
+    .optionItem
+      height 1rem
+      font-size 0.3rem
+      color #ccc
+      display flex
+      align-items center
+      overflow hidden
+      white-space nowrap
+      text-overflow ellipsis
+      max-width 100% vw
+      .optionIcon
+        margin-left 0.2rem
+        margin-right 0.2rem
+        font-size 0.45rem
+      .album
+        overflow hidden
+        white-space nowrap
+        text-overflow ellipsis
+        max-width 80% vw
+.option-enter-active, .option-leave-active
+  opacity 1
+  transition all 0.5s ease
+  transform translateY(0)
+.option-enter, .option-leave-to
+  opacity 0
+  transform translateY(100%)        
 </style>

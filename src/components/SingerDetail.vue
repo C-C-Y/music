@@ -106,6 +106,9 @@ export default {
   computed: {},
   methods: {
     ...mapActions(["selectPlay"]),
+    showMenu(index) {
+      this.$emit("showMenu", index);
+    },
     play(index) {
       let list = [...this.hotSongs];
       this.selectPlay({ list, index });

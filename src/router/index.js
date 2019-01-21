@@ -122,6 +122,13 @@ const router = new Router({
     {
       path: "/search",
       name: "search",
+      children: [
+        {
+          path: "searchView/:type",
+          name: "searchview",
+          component: () => import("../components/SearchView.vue")
+        }
+      ],
       component: () => import("../views/search/Search.vue")
     },
     {

@@ -1,9 +1,10 @@
 <template>
   <div id="app">
-    <keep-alive exclude="loadpage,songlist,load,album,songcomment,singerpage,personalPage">
+    <keep-alive exclude="loadpage,songlist,load,album,songcomment,singerpage,personalPage,search,searchview
+    ">
       <router-view />
     </keep-alive>
-     <player></player> 
+    <player></player>
   </div>
 </template>
 

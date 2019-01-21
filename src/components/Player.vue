@@ -53,7 +53,8 @@
                 <use xlink:href="#icon-xihuan2"></use>
               </svg>
               <svg class="icon"
-                   aria-hidden="true">
+                   aria-hidden="true"
+                   @click.stop="enterComment">
                 <use xlink:href="#icon-weibiaoti-"></use>
               </svg>
               <svg class="icon"
@@ -315,6 +316,20 @@ export default {
       "setInitPlay",
       "setChangeStatus"
     ]),
+    enterComment() {
+      this.$router.push({
+        name: "songcomment",
+        params: {
+          songId: this.currentSong.id,
+          song: {
+            pic: this.currentSong.al.picUrl,
+            name: this.currentSong.name,
+            singer: this.singerName
+          }
+        }
+      });
+      this.closeFullScreen();
+    },
     showList() {
       this.listShow = true;
     },
