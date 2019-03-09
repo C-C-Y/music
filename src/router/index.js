@@ -141,18 +141,6 @@ const router = new Router({
       name: "singerpage",
       component: () => import("../views/singerPage/SingerPage.vue")
     }
-    /*
-    
-    {
-      path: "/singer/:id",
-      name: "singer",
-      component: () => import("../views/singer/Singer.vue")
-    },
-    {
-      path: "/comment/:id",
-      name: "comment",
-      component: () => import("../views/comment/Comment.vue")
-    } */
   ]
 });
 

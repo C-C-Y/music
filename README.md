@@ -1,29 +1,35 @@
-# mymusic
-
+## 仿移动端网易云音乐(只涉及歌曲部分)
+基于Vue2+VueRouter+Vuex +Nginx
 ## Project setup
 ```
 npm install
 ```
 
-### Compiles and hot-reloads for development
-```
-npm run serve
-```
+## API
+[网易云音乐Node版API](https://binaryify.github.io/NeteaseCloudMusicApi/#/?id=neteasecloudmusicapi)
+### 现完成页面
+1. 登录页面
+2. 首页推荐
+3. FM 
+5. 每日推荐
+6. 排行榜
+7. 歌单
+8. 播放器(mini+全屏)
+9. 歌曲评论展示
+10. 歌手页面
+11. 用户个人页
+12. 搜索
+13. 专辑
+14. 新歌速递
+15. 新碟上架
+16. 歌词页面
+### 小优化
++ 图片使用Vue-LazyLoad实现懒加载
++ 手机号输入只能输入数字
++ 密码不能输入汉字
++ 本地缓存数据,减少请求
 
-### Compiles and minifies for production
-```
-npm run build
-```
 
-### Run your tests
-```
-npm run test
-```
-
-### Lints and fixes files
-```
-npm run lint
-```
-
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+#### 说点什么
+首先感谢那些大佬对API服务的持续更新,使API的内容越来越丰富,体验越来越好,现在的接口丰富到差不多可以支持一个客户端了,我每次看都有实现所有功能的冲动,原本我也是想仿一个客户端的,但是没想到真的是太复杂了,很多交互,很多的逻辑,最主要还是我菜吧,只尽力完成歌曲相关部分.
+说实话,写的时候有些急于求成,有些代码耦合性很强,一些组件分离复用也不是很明确,样式flex一阵撸,我是将API服务挂在自己的服务器上的,本来想写完上线的,但是写完反而没这个心了,它不是一个满意的作品,还是以后有时间重构一下再说吧.
