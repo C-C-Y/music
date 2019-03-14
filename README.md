@@ -32,11 +32,14 @@ npm install
 ### 演示地址
 由于刚开始就想的是仿一个客户端,也没添加游客功能,所以账号密码都是要真的,不登录又什么都看不了,就有点尴尬了...
 
-[myMusic](http://zazahui.online)
+[myMusic](http://zazahui.online)  
+
 Chrome移动调试模式效果最佳
 
 
 不建议扫码,原先手机查看没啥大问题,不知道为什么放到服务器上线后手机浏览器不能播放音频了,还有我一直没解决gzip压缩的问题,非常非常耗流量
+
+
 ![mymusic](https://files.gitter.im/%E7%BB%83%E4%B9%A0%E5%8E%85/Lobby/OQVE/thumb/1552569083.png)
 
 
