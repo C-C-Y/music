@@ -35,8 +35,8 @@ npm install
  账号:13404674535          
  密码:123456         
 Chrome移动调试模式效果最佳  
-`如果不能滑动请刷新一下`,这个bug手机上测试的时候没有出现,一直没搞懂为什么     
-[myMusic](http://zazahui.online)  
+`如果不能滑动请刷新一下`,这个bug手机上测试的时候没有出现,一直没搞懂为什么      
+<a href="http://zazahui.online" target="_blank">点这里</a>  
 
 
 
